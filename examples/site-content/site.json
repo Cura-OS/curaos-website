@@ -1,0 +1,18 @@
+{
+  "siteName": "CuraOS",
+  "tagline": "Composable, self-hosted-first care platform",
+  "description": "CuraOS is a composable platform with a generic neutral core and opt-in vertical overlays (Health, Education, ERP). Ship small, ship independently, compose per tenant and market — on your own infrastructure.",
+  "valueProps": [
+    "Self-hosted first — deployable on customer infrastructure, no managed-cloud lock-in.",
+    "Generic before vertical — a reusable neutral core that verticals extend, never fork.",
+    "Event-led — durable messaging with versioned contracts; sync APIs are secondary.",
+    "Multi-tenant — SaaS, on-prem, and hybrid from one codebase, with tenant data isolation.",
+    "Builder-led — every experience expressed through the workflow/BPM engine and app/site builder."
+  ],
+  "deployProfiles": [
+    { "name": "Cloud SaaS", "blurb": "Per-tenant, vendor-managed, horizontally scaled." },
+    { "name": "On-prem", "blurb": "Single tenant on customer infrastructure; overlays opt-in." },
+    { "name": "Hybrid", "blurb": "Vendor control plane plus customer-hosted data plane." },
+    { "name": "Home lab / air-gap", "blurb": "Single tenant, fully offline, same artifacts, zero external calls." }
+  ]
+}

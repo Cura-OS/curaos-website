@@ -1,0 +1,18 @@
+# Zarf component INPUT for the CuraOS air-gap public brochure site.
+#
+# This is a component fragment the signed-bundle host (Story 3 / curaos-deploy)
+# composes into the main ops/zarf/zarf.yaml. It carries the digest-pinned NGINX
+# brochure image + the K8s manifests so the public site deploys with ZERO
+# external egress inside an air-gap install. S6 emits this input; S3 signs/packages it.
+components:
+  - name: curaos-website
+    required: false
+    description: "CuraOS public brochure site — offline static served by NGINX. Zero-egress."
+    manifests:
+      - name: curaos-website
+        files:
+          - ../k8s/website.yaml
+    images:
+      # Built from hosting/nginx/Dockerfile and published to GHCR by curaos-deploy.
+      # Digest is pinned by the release pipeline at bundle-assembly time.
+      - ghcr.io/cura-care-oriented-stack/curaos-website:DIGEST_PINNED_AT_RELEASE

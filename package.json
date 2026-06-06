@@ -1,0 +1,24 @@
+{
+  "name": "curaos-website",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CuraOS public website: offline/air-gap-renderable static brochure site (Bun-native build, zero external egress)",
+  "type": "module",
+  "engines": {
+    "bun": ">=1.1.0",
+    "node": ">=22.0.0"
+  },
+  "packageManager": "bun@1.1.42",
+  "scripts": {
+    "ci": "bash ci.sh",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "build": "bash scripts/build.sh",
+    "offline-smoke": "bash scripts/offline-smoke.sh",
+    "pin-guard": "bash scripts/pin-guard.sh"
+  },
+  "devDependencies": {
+    "@types/bun": "1.1.14",
+    "typescript": "5.7.2"
+  }
+}
