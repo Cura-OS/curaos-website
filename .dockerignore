@@ -1,0 +1,6 @@
+node_modules/
+.build-workspace/
+.cache/
+tests/
+*.log
+.DS_Store
