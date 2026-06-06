@@ -82,7 +82,10 @@ describe("hosting — air-gap invariants", () => {
         .flatMap((l) => [...l.matchAll(/ghcr\.io\/\S+/g)].map((m) => m[0]));
       expect(refs.length).toBeGreaterThan(0);
       for (const r of refs) {
-        expect(r).toMatch(/@sha256:[0-9a-f]{64}|DIGEST_PINNED_AT_RELEASE/);
+        // The ref must END with either a full digest or the placeholder as a
+        // proper `:`-prefixed tag — guards against concatenated false positives
+        // like `repoDIGEST_PINNED_AT_RELEASE` or `repo:latestDIGEST_...`.
+        expect(r).toMatch(/@sha256:[0-9a-f]{64}$|:DIGEST_PINNED_AT_RELEASE$/);
       }
     }
   });

@@ -41,9 +41,18 @@ spec:
               port: 8080
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop: ["ALL"]
+          # NGINX needs write access to these paths even when the root
+          # filesystem is read-only; back them with ephemeral emptyDir volumes.
+          volumeMounts:
+            - name: cache
+              mountPath: /var/cache/nginx
+            - name: run
+              mountPath: /var/run
+            - name: tmp
+              mountPath: /tmp
           resources:
             requests:
               cpu: 10m
@@ -51,6 +60,13 @@ spec:
             limits:
               cpu: 100m
               memory: 128Mi
+      volumes:
+        - name: cache
+          emptyDir: {}
+        - name: run
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
