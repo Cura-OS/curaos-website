@@ -117,11 +117,15 @@ describe("renderPage: 8-section dev-platform layout", () => {
     expect(html).toContain("A generic neutral core with opt-in overlays.");
   });
 
-  test("renders the positioning strip with deploy-model badges", () => {
+  test("renders the positioning strip with inline deploy-model labels (not pills)", () => {
     const html = renderPage(CONTENT, LINKS, LTR);
     expect(html).toContain("Self-hosted first. Event-led. Multi-tenant.");
-    expect(html).toContain(`<span class="badge">Cloud SaaS</span>`);
-    expect(html).toContain(`<span class="badge">Air-gap</span>`);
+    // Deploy models render as an inline hairline-separated label list, NOT pill
+    // badges (the pill badge was a template signature the redesign removed).
+    expect(html).toContain(`<ul class="inline-labels">`);
+    expect(html).toContain(`<li>Cloud SaaS</li>`);
+    expect(html).toContain(`<li>Air-gap</li>`);
+    expect(html).not.toContain(`class="badge"`);
   });
 
   test("renders one pillar card per pillar with an inline svg icon", () => {
@@ -135,14 +139,21 @@ describe("renderPage: 8-section dev-platform layout", () => {
     expect(html).not.toMatch(/<img/i);
   });
 
-  test("composes the architecture diagram as inline SVG with core + overlays", () => {
+  test("composes the architecture diagram as a layered stack (overlays over core)", () => {
     const html = renderPage(CONTENT, LINKS, LTR);
     expect(html).toContain(`role="img"`);
     expect(html).toContain("Neutral core");
     expect(html).toContain(">HealthStack</text>");
     expect(html).toContain(">EducationStack</text>");
     expect(html).toContain(">ERP</text>");
-    // Dependency-direction message is carried for screen readers.
+    // Layered-stack semantics: the two layers are named, and the core carries the
+    // accent while overlays carry the support hue (semantic, not decorative).
+    expect(html).toContain(">VERTICAL OVERLAYS (OPT-IN)</text>");
+    expect(html).toContain(">FOUNDATION</text>");
+    expect(html).toContain(`fill="var(--accent)"`); // core node
+    expect(html).toContain(`stroke="var(--overlay-hue)"`); // overlay tiles
+    // Dependency arrows (overlay -> core) are present and the direction message
+    // is carried for screen readers.
     expect(html).toContain("never the reverse");
     expect(html).toContain("marker-end");
   });
@@ -157,7 +168,9 @@ describe("renderPage: 8-section dev-platform layout", () => {
   test("renders the quickstart as a static monospace terminal block", () => {
     const html = renderPage(CONTENT, LINKS, LTR);
     expect(html).toContain(`class="terminal"`);
-    expect(html).toContain("$ curaos init acme --profile on-prem");
+    // The leading "$ " shell prompt is wrapped so the "$" can carry the one
+    // permitted accent texture; the command text follows it verbatim.
+    expect(html).toContain(`<span class="prompt">$</span> curaos init acme --profile on-prem`);
     expect(html).toContain("ok: acme up, zero external calls");
   });
 

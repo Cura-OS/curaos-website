@@ -16,16 +16,27 @@ just build              # render the static site into site/ (in-repo fixture con
 just offline-smoke      # prove the built site/ renders with zero network egress
 ```
 
-Build with real authored copy + live link targets (operator deploy):
+Build with the canonical authored copy + live link targets (operator deploy):
 
 ```sh
 just build \
-  --content-dir ../../ai/curaos/curaos-website/site-content \
-  --docs-url https://docs.curaos.io \
-  --demo-url https://demo.curaos.io --demo-live true \
+  --content-dir content \
+  --docs-url https://curaos-docs.abualruz.com \
+  --demo-url https://curaos-demo.abualruz.com --demo-live false \
   --releases-url https://github.com/Cura-Care-Oriented-Stack/curaos/releases \
   --lang en --dir ltr
 ```
+
+The deploy source of truth is `content/site.json` (this is a public brochure, so
+its copy lives with the public site). A 1:1 synced copy lives in the workspace
+mirror (`ai/curaos/curaos-website/site-content/site.json`) for the doc graph;
+edit both in the same change. `examples/site-content/` is a minimal standalone
+build/test fixture only, never the deploy copy.
+
+> Single-level Origin Cert: the Cloudflare wildcard is `*.abualruz.com` (one
+> level), so link targets use the FLATTENED hosts `curaos-docs.abualruz.com` /
+> `curaos-demo.abualruz.com`. Two-level `docs.curaos.abualruz.com` fails the TLS
+> handshake.
 
 ## Layout
 
@@ -39,7 +50,8 @@ just build \
 | `hosting/nginx/` | NGINX image + server block for static hosting. |
 | `hosting/k8s/` | K8s Deployment + Service. |
 | `hosting/zarf/` | Zarf component input (air-gap). |
-| `examples/site-content/` | In-repo brochure-copy fixture. |
+| `content/` | Canonical authored brochure copy (deploy source of truth). |
+| `examples/site-content/` | Minimal standalone build/test fixture (not deploy copy). |
 | `ci.sh` / `justfile` | Local CI gate (default merge gate). |
 | `tests/` | Bun unit + contract tests. |
 | `.github/workflows/pages.yml` | `workflow_dispatch`-only GitHub Pages mirror. |
