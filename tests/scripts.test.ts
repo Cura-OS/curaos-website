@@ -13,11 +13,16 @@ import { tmpdir } from "node:os";
 
 const ROOT = join(import.meta.dir, "..");
 
+// The banned characters, built from escapes so THIS test file stays free of the
+// literal dashes it plants into throwaway fixtures (HARD RULE: zero em/en dash).
+const EM = String.fromCharCode(0x2014); // U+2014 em-dash
+const EN = String.fromCharCode(0x2013); // U+2013 en-dash
+
 function sh(script: string, args: string[] = []) {
   return spawnSync("bash", [join(ROOT, script), ...args], { cwd: ROOT, encoding: "utf8" });
 }
 
-describe("scripts/lib.sh — flag + content-dir resolution", () => {
+describe("scripts/lib.sh - flag + content-dir resolution", () => {
   test("parse_flag reads --name VALUE and --name=VALUE", () => {
     const r = spawnSync(
       "bash",
@@ -53,7 +58,7 @@ describe("scripts/lib.sh — flag + content-dir resolution", () => {
   });
 });
 
-describe("scripts/pin-guard.sh — supply-chain pins", () => {
+describe("scripts/pin-guard.sh - supply-chain pins", () => {
   test("passes on the committed tree (actions SHA-pinned, images digest-pinned)", () => {
     const r = sh("scripts/pin-guard.sh");
     expect(r.stdout + r.stderr).toContain("pin-guard: PASS");
@@ -61,7 +66,7 @@ describe("scripts/pin-guard.sh — supply-chain pins", () => {
   });
 });
 
-describe("scripts/build.sh — end-to-end render with flag injection", () => {
+describe("scripts/build.sh - end-to-end render with flag injection", () => {
   test("builds into a custom --out with injected link targets + rtl", () => {
     const out = mkdtempSync(join(tmpdir(), "site-build-"));
     try {
@@ -83,18 +88,99 @@ describe("scripts/build.sh — end-to-end render with flag injection", () => {
       expect(existsSync(join(out, "index.html"))).toBe(true);
       const html = readFileSync(join(out, "index.html"), "utf8");
       expect(html).toContain(`href="https://docs.example.test"`);
-      expect(html).toContain(`href="https://demo.example.test"`);
       expect(html).toContain(`href="https://rel.example.test"`);
       expect(html).toContain(`dir="rtl"`);
-      // demo not live by default → coming-soon marker present.
+      // Demo is not live by default: the CTA is a non-navigational coming-soon
+      // placeholder with NO href to the demo URL (finding 5).
       expect(html).toContain(`data-status="coming-soon"`);
+      expect(html).not.toContain(`href="https://demo.example.test"`);
     } finally {
       rmSync(out, { recursive: true, force: true });
     }
   });
 });
 
-describe("scripts/offline-smoke.sh — air-gap egress guard", () => {
+describe("scripts/em-dash-gate.sh - fail-closed dash gate", () => {
+  test("PASSES (exit 0) on a clean tree with no em/en dash", () => {
+    const clean = mkdtempSync(join(tmpdir(), "emgate-clean-"));
+    try {
+      mkdirSync(join(clean, "src"));
+      writeFileSync(join(clean, "src", "ok.ts"), "const x = 'no dashes here';\n");
+      const r = sh("scripts/em-dash-gate.sh", [join(clean, "src")]);
+      expect(r.stdout + r.stderr).toContain("em-dash gate: PASS");
+      expect(r.status).toBe(0);
+    } finally {
+      rmSync(clean, { recursive: true, force: true });
+    }
+  });
+
+  test("FAILS (non-zero) when an em-dash (U+2014) is present", () => {
+    const dirty = mkdtempSync(join(tmpdir(), "emgate-em-"));
+    try {
+      mkdirSync(join(dirty, "src"));
+      writeFileSync(join(dirty, "src", "bad.ts"), `a${EM}b\n`);
+      const r = sh("scripts/em-dash-gate.sh", [join(dirty, "src")]);
+      expect(r.status).not.toBe(0);
+      expect(r.stdout + r.stderr).toMatch(/em-dash \(U\+2014\) or en-dash/);
+    } finally {
+      rmSync(dirty, { recursive: true, force: true });
+    }
+  });
+
+  test("FAILS (non-zero) when an en-dash (U+2013) is present", () => {
+    const dirty = mkdtempSync(join(tmpdir(), "emgate-en-"));
+    try {
+      mkdirSync(join(dirty, "src"));
+      writeFileSync(join(dirty, "src", "bad.ts"), `a${EN}b\n`);
+      const r = sh("scripts/em-dash-gate.sh", [join(dirty, "src")]);
+      expect(r.status).not.toBe(0);
+      expect(r.stdout + r.stderr).toMatch(/em-dash \(U\+2014\) or en-dash/);
+    } finally {
+      rmSync(dirty, { recursive: true, force: true });
+    }
+  });
+
+  test("byte-scan branch (non-PCRE grep) still fails-closed AND passes clean", () => {
+    // Force the byte path: a stub `grep` on PATH that rejects -P so the PCRE
+    // probe fails and the gate falls back to the LC_ALL=C fixed-string scan.
+    const sandbox = mkdtempSync(join(tmpdir(), "emgate-nopcre-"));
+    try {
+      const binDir = join(sandbox, "bin");
+      mkdirSync(binDir);
+      const stub = join(binDir, "grep");
+      writeFileSync(
+        stub,
+        `#!/usr/bin/env bash\nfor a in "$@"; do case "$a" in -*P*) exit 2;; esac; done\nexec $(command -pv grep) "$@"\n`,
+      );
+      spawnSync("chmod", ["+x", stub]);
+      const env = { ...process.env, PATH: `${binDir}:${process.env.PATH ?? ""}` };
+
+      mkdirSync(join(sandbox, "src"));
+      writeFileSync(join(sandbox, "src", "bad.ts"), `a${EM}b\n`);
+      const bad = spawnSync(
+        "bash",
+        [join(ROOT, "scripts/em-dash-gate.sh"), join(sandbox, "src")],
+        { cwd: ROOT, encoding: "utf8", env },
+      );
+      // Byte branch must catch the dash (fail-closed), not silently pass.
+      expect(bad.status).not.toBe(0);
+      expect(bad.stdout + bad.stderr).toMatch(/em-dash \(U\+2014\) or en-dash/);
+
+      writeFileSync(join(sandbox, "src", "bad.ts"), "clean now\n");
+      const ok = spawnSync(
+        "bash",
+        [join(ROOT, "scripts/em-dash-gate.sh"), join(sandbox, "src")],
+        { cwd: ROOT, encoding: "utf8", env },
+      );
+      expect(ok.status).toBe(0);
+      expect(ok.stdout + ok.stderr).toMatch(/byte scan/);
+    } finally {
+      rmSync(sandbox, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("scripts/offline-smoke.sh - air-gap egress guard", () => {
   test("fails when index.html references a remote CDN asset", () => {
     const site = mkdtempSync(join(tmpdir(), "site-remote-"));
     try {

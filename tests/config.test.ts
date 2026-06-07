@@ -40,13 +40,14 @@ describe("examples/site-content/site.json (fixture copy)", () => {
     expect(Array.isArray(site.deployProfiles)).toBe(true);
     expect(site.deployProfiles.length).toBe(4);
   });
-  test("has a site name + value props", () => {
+  test("has a site name + a non-empty pillars grid", () => {
     expect(site.siteName).toBeTruthy();
-    expect(site.valueProps.length).toBeGreaterThan(0);
+    expect(Array.isArray(site.pillars)).toBe(true);
+    expect(site.pillars.length).toBeGreaterThan(0);
   });
 });
 
-describe(".github/workflows/pages.yml — air-gap + supply-chain invariants", () => {
+describe(".github/workflows/pages.yml - air-gap + supply-chain invariants", () => {
   const wf = readFileSync(join(ROOT, ".github/workflows/pages.yml"), "utf8");
 
   test("is workflow_dispatch-only (no push/pr/schedule auto-trigger)", () => {
@@ -65,7 +66,7 @@ describe(".github/workflows/pages.yml — air-gap + supply-chain invariants", ()
   });
 });
 
-describe("hosting — air-gap invariants", () => {
+describe("hosting - air-gap invariants", () => {
   test("nginx Dockerfile base image is digest-pinned", () => {
     const df = readFileSync(join(ROOT, "hosting/nginx/Dockerfile"), "utf8");
     expect(df).toMatch(/FROM nginx:[^@]+@sha256:[0-9a-f]{64}/);
@@ -83,7 +84,7 @@ describe("hosting — air-gap invariants", () => {
       expect(refs.length).toBeGreaterThan(0);
       for (const r of refs) {
         // The ref must END with either a full digest or the placeholder as a
-        // proper `:`-prefixed tag — guards against concatenated false positives
+        // proper `:`-prefixed tag - guards against concatenated false positives
         // like `repoDIGEST_PINNED_AT_RELEASE` or `repo:latestDIGEST_...`.
         expect(r).toMatch(/@sha256:[0-9a-f]{64}$|:DIGEST_PINNED_AT_RELEASE$/);
       }
