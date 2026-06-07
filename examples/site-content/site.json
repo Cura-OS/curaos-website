@@ -32,7 +32,7 @@
   "footer": {
     "columns": [
       { "heading": "Product", "links": [
-        { "label": "Documentation", "href": "https://docs.curaos.example" }
+        { "label": "Documentation", "href": "{docsUrl}" }
       ]}
     ],
     "note": "CuraOS is a self-hosted-first, composable care platform."

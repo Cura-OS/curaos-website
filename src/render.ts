@@ -8,9 +8,14 @@
 // zero-egress / air-gap renderable. External docs/demo/releases links are
 // <a href> NAVIGATION (not fetched assets) and are allowed.
 //
-// Design direction: a dark-capable, teal-accented, system-font dev-platform
-// page (Supabase / Linear / Railway / Vercel cues), all achieved with inlined
-// CSS plus inline SVG (no web font, no icon font, no <img>, no CDN, no JS).
+// Design direction: a slate-neutral, system-font, engineered-infra page
+// (Tailscale / HashiCorp / Linear / Grafana cues). One deep clinical-blue accent
+// spent ONLY on the primary CTA, links, the architecture core node, and focus
+// rings (plus two named texture exceptions: the terminal "$" prompt and footer
+// link hover). One warm amber exists solely to make the architecture overlay
+// nodes read distinct from the blue core. Everything else is neutral. All of it
+// is achieved with one inlined <style> plus inline SVG (no web font, no icon
+// font, no <img>, no CDN, no JS) so the page stays zero-egress / air-gap.
 
 export interface Pillar {
   readonly icon: string;
@@ -118,83 +123,101 @@ function icon(key: string | undefined): string {
   return `<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
 }
 
+// Token model: ONE :root block drives both themes via CSS light-dark() (Baseline
+// 2024; falls back to the light value on old engines, paired with the
+// <meta name="color-scheme"> in <head>). Neutrals are SLATE (cool, faint blue
+// undertone, reads gray not green). The accent is a deep clinical blue, used per
+// the accent-placement rule below. Focus rings are FLAT HEX (not color-mix) so a
+// no-JS kiosk/WebView without color-mix support never loses the ring (a11y).
 const STYLE = `:root{
-  --accent:#0d7d72;
-  --accent-2:#14b8a6;
-  --bg:#ffffff;
-  --bg-elev:#f7faf9;
-  --fg:#0d1f1d;
-  --fg-muted:#51635f;
-  --border:color-mix(in oklab, var(--fg) 12%, transparent);
-  --card:color-mix(in oklab, var(--accent) 4%, var(--bg));
-  --ring:color-mix(in oklab, var(--accent) 35%, transparent);
-  --maxw:72rem;
-  --radius:14px;
+  color-scheme:light dark;
+  /* Neutral ramp: slate, not green. */
+  --bg:light-dark(#ffffff,#0b0f1a);
+  --bg-elev:light-dark(#f6f7f9,#111827);
+  --surface:light-dark(#ffffff,#0f1626);
+  --fg:light-dark(#0f172a,#f1f5f9);
+  --fg-muted:light-dark(#475569,#94a3b8);
+  --fg-subtle:light-dark(#5b6675,#8a99af);
+  --border:light-dark(#e2e8f0,#1e293b);
+  --border-strong:light-dark(#cbd5e1,#334155);
+  /* Primary accent: deep clinical blue. */
+  --accent:light-dark(#1d4ed8,#60a5fa);
+  --accent-hover:light-dark(#1e40af,#93c5fd);
+  --accent-quiet:light-dark(#eff4ff,#13213d);
+  --on-accent:light-dark(#ffffff,#0b0f1a);
+  /* Secondary hue: architecture overlay nodes only. */
+  --overlay-hue:light-dark(#b45309,#f59e0b);
+  --overlay-quiet:light-dark(#fef3e2,#2a1f0a);
+  /* Flat focus ring (no color-mix dependency). */
+  --ring:light-dark(#93b4f3,#2f4a7a);
+  --maxw:68rem;
+  --radius:10px;
+  --radius-sm:6px;
   --gap:clamp(1rem, 2vw, 1.5rem);
-  --section-y:clamp(3.5rem, 8vw, 7rem);
-  --shadow:0 1px 2px rgba(0,0,0,.04), 0 8px 30px color-mix(in oklab, var(--accent) 10%, transparent);
+  --section-y:clamp(3.5rem, 8vw, 6.5rem);
+  --shadow-card:light-dark(0 1px 2px rgba(15,23,42,.06),0 1px 0 rgba(0,0,0,.4));
   --font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", "Segoe UI Variable", Roboto, "Helvetica Neue", Arial, "Noto Sans", system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   --font-mono:ui-monospace, "SF Mono", "SFMono-Regular", "Cascadia Code", "Source Code Pro", Menlo, Consolas, "Liberation Mono", monospace;
 }
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg:#0a0f0e;
-    --bg-elev:#0f1413;
-    --fg:#e8f0ee;
-    --fg-muted:#9bb0ab;
-    --border:color-mix(in oklab, var(--fg) 16%, transparent);
-    --card:color-mix(in oklab, var(--accent) 10%, #0d1413);
-    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 40px color-mix(in oklab, var(--accent) 18%, transparent);
-  }
-}
 *{box-sizing:border-box}
 html{font-family:var(--font-sans);font-size:16px;-webkit-text-size-adjust:100%}
-body{margin:0;color:var(--fg);background:var(--bg);line-height:1.55;font-synthesis:none;text-rendering:optimizeLegibility}
+body{margin:0;color:var(--fg);background:var(--bg);line-height:1.6;font-synthesis:none;text-rendering:optimizeLegibility}
 a{color:var(--accent)}
-.wrap{max-width:var(--maxw);margin-inline:auto;padding-inline:1.25rem}
+a:hover{color:var(--accent-hover)}
+.wrap{max-width:var(--maxw);margin-inline:auto;padding-inline:1.5rem}
 section{padding-block:var(--section-y)}
-.h-display{font-size:clamp(2.4rem,1.4rem + 4.2vw,4.5rem);line-height:1.04;letter-spacing:-0.03em;font-weight:780;margin:0}
-.h-section{font-size:clamp(1.6rem,1.2rem + 1.6vw,2.4rem);line-height:1.12;letter-spacing:-0.02em;font-weight:680;margin:0 0 .5rem}
-.lead{font-size:clamp(1.05rem,1rem + .5vw,1.35rem);color:var(--fg-muted);max-width:46ch;margin:1rem auto 0}
-.eyebrow{font-size:.8rem;font-weight:650;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0}
-.eyebrow-strip{background:var(--bg-elev);border-bottom:1px solid var(--border);text-align:center;padding:.6rem 1.25rem}
-.eyebrow-strip p{margin:0}
-.hero{position:relative;text-align:center;padding:var(--section-y) 1.25rem;overflow:clip}
-.hero::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(60rem 30rem at 50% -8rem, color-mix(in oklab, var(--accent) 22%, transparent), transparent 70%), linear-gradient(180deg, var(--bg-elev), var(--bg))}
-.hero .h-display{max-width:18ch;margin-inline:auto}
-.cta-row{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:1.75rem}
-.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.15rem;border-radius:10px;font-weight:600;text-decoration:none;border:1px solid transparent}
-.btn-primary{background:linear-gradient(180deg,var(--accent-2),var(--accent));color:#fff;box-shadow:var(--shadow)}
-.btn-ghost{background:transparent;color:var(--fg);border-color:var(--border)}
+/* Hairline rule between stacked sections: deliberate slabs, not floating blocks. */
+main section + section{border-top:1px solid var(--border)}
+/* Type scale snapped to the standard weight ladder (800/700/600/500/400) so the
+   hierarchy survives static system faces (Linux Noto, older Windows) that round
+   non-standard weights to the nearest 100. */
+.h-display{font-size:clamp(2.6rem,1.3rem + 5vw,4.75rem);line-height:1.02;letter-spacing:-0.035em;font-weight:800;margin:0;text-wrap:balance}
+.h-section{font-size:clamp(1.7rem,1.2rem + 1.8vw,2.5rem);line-height:1.1;letter-spacing:-0.025em;font-weight:700;margin:0}
+.lead{font-size:clamp(1.1rem,1rem + .55vw,1.4rem);font-weight:400;color:var(--fg-muted);line-height:1.5;max-width:52ch;margin:1.1rem 0 0}
+.eyebrow{font-family:var(--font-mono);font-size:.75rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-subtle);margin:0 0 .6rem}
+.eyebrow-strip{background:var(--bg-elev);border-bottom:1px solid var(--border);padding:.55rem 1.5rem}
+.eyebrow-strip p{margin:0;max-width:var(--maxw);margin-inline:auto}
+/* Hero: left-aligned, asymmetric, NO radial glow. Subtle slate top wash only. */
+.hero{position:relative;padding-block:clamp(4rem,10vw,8rem) var(--section-y);overflow:clip;background:linear-gradient(180deg, var(--bg-elev), var(--bg))}
+.hero .h-display{max-width:20ch}
+.cta-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:2rem}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.15rem;border-radius:var(--radius-sm);font-weight:600;text-decoration:none;border:1px solid transparent}
+.btn-primary{background:var(--accent);color:var(--on-accent)}
+.btn-primary:hover{background:var(--accent-hover);color:var(--on-accent)}
+.btn-ghost{background:transparent;color:var(--fg);border-color:var(--border-strong)}
+.btn-ghost:hover{border-color:var(--fg-subtle)}
 .btn:focus-visible,a:focus-visible{outline:2px solid var(--ring);outline-offset:2px}
-.btn[data-status=coming-soon]{opacity:.6;pointer-events:none}
-.coming-soon-tag{font-size:.75rem;margin-inline-start:.4rem;opacity:.85;font-weight:500}
-.positioning{text-align:center}
-.positioning p{font-size:clamp(1rem,.95rem + .4vw,1.2rem);color:var(--fg-muted);max-width:52ch;margin:0 auto 1.25rem}
-.badges{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap}
-.badge{font-size:.8rem;font-weight:600;padding:.35rem .75rem;border-radius:999px;border:1px solid var(--border);background:var(--card);color:var(--fg-muted)}
-.section-head{text-align:center;max-width:42ch;margin:0 auto 2.5rem}
+.btn[data-status=coming-soon]{opacity:.55;pointer-events:none;color:var(--fg-muted)}
+.coming-soon-tag{font-size:.75rem;margin-inline-start:.4rem;opacity:.9;font-weight:500}
+.section-head{max-width:46ch;margin:0 0 2.25rem}
+.positioning .lead{font-size:clamp(1.05rem,.95rem + .4vw,1.25rem);margin-top:0}
+/* Deploy-model labels: inline, hairline-dotted, NOT pills. */
+.inline-labels{margin:1.25rem 0 0;color:var(--fg-muted);font-size:.95rem;display:flex;flex-wrap:wrap;gap:.5rem .9rem;list-style:none;padding:0}
+.inline-labels li{position:relative;padding-inline-end:.9rem}
+.inline-labels li:not(:last-child)::after{content:"";position:absolute;inset-inline-end:0;top:50%;width:3px;height:3px;border-radius:999px;background:var(--border-strong);transform:translateY(-50%)}
 .grid{display:grid;gap:var(--gap)}
-.grid-3{grid-template-columns:repeat(auto-fit,minmax(min(100%,17rem),1fr))}
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;display:flex;flex-direction:column;gap:.5rem}
-.card .ic{width:28px;height:28px;color:var(--accent)}
-.card h3{font-size:1.05rem;margin:.25rem 0 0;letter-spacing:-.01em}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr))}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.3rem;display:flex;flex-direction:column;gap:.4rem;box-shadow:var(--shadow-card)}
+.card .ic{width:24px;height:24px;color:var(--fg-subtle)}
+.card h3{font-size:1.0625rem;font-weight:600;margin:.45rem 0 0;letter-spacing:-.011em;line-height:1.3}
 .card p{margin:0;color:var(--fg-muted);font-size:.95rem}
-.arch{display:flex;flex-direction:column;align-items:center;gap:1rem}
-.arch svg{width:100%;max-width:38rem;height:auto;color:var(--accent)}
-.arch figcaption{color:var(--fg-muted);max-width:52ch;text-align:center;font-size:.95rem;margin:0}
-.terminal{background:var(--bg-elev);border:1px solid var(--border);border-radius:var(--radius);max-width:48rem;margin-inline:auto;overflow:hidden;box-shadow:var(--shadow)}
-.terminal .bar{display:flex;gap:.4rem;padding:.65rem .9rem;border-bottom:1px solid var(--border)}
-.terminal .bar span{width:.7rem;height:.7rem;border-radius:999px;background:var(--border)}
-.terminal pre{margin:0;padding:1rem 1.15rem;font-family:var(--font-mono);font-size:.92rem;line-height:1.7;color:var(--fg);overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+.arch{display:flex;flex-direction:column;align-items:flex-start;gap:1rem}
+.arch svg{width:100%;max-width:40rem;height:auto;color:var(--fg-subtle)}
+.arch figcaption{color:var(--fg-muted);max-width:56ch;font-size:.95rem;margin:0}
+.terminal{background:var(--bg-elev);border:1px solid var(--border);border-radius:var(--radius);max-width:48rem;overflow:hidden}
+.terminal .bar{display:flex;align-items:center;gap:.4rem;padding:.6rem .9rem;border-bottom:1px solid var(--border)}
+.terminal .bar .dot{width:.65rem;height:.65rem;border-radius:999px;background:var(--border-strong)}
+.terminal .bar .bar-title{margin-inline-start:.6rem;font-family:var(--font-mono);font-size:.75rem;color:var(--fg-subtle)}
+.terminal pre{margin:0;padding:1rem 1.15rem;font-family:var(--font-mono);font-size:.9rem;line-height:1.65;color:var(--fg);overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+.terminal pre .prompt{color:var(--accent)}
 .site-footer{border-top:1px solid var(--border);background:var(--bg-elev)}
 .footer-cols{display:grid;gap:var(--gap);grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));padding-block:var(--section-y) 2rem}
-.footer-cols h2{font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;color:var(--fg-muted);margin:0 0 .75rem}
-.footer-cols ul{list-style:none;margin:0;padding:0;display:grid;gap:.5rem}
+.footer-cols h2{font-family:var(--font-mono);font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.12em;color:var(--fg-subtle);margin:0 0 .85rem}
+.footer-cols ul{list-style:none;margin:0;padding:0;display:grid;gap:.55rem}
 .footer-cols a{color:var(--fg);text-decoration:none}
 .footer-cols a:hover{color:var(--accent)}
-.footer-note{color:var(--fg-muted);font-size:.9rem;border-top:1px solid var(--border);padding-block:1.25rem;margin:0}
-[dir=rtl] .grid,[dir=rtl] .footer-cols{text-align:right}
+.footer-note{color:var(--fg-subtle);font-size:.9rem;border-top:1px solid var(--border);padding-block:1.25rem;margin:0}
+[dir=rtl] .grid,[dir=rtl] .footer-cols,[dir=rtl] .hero,[dir=rtl] .section-head{text-align:right}
 @media (prefers-reduced-motion: reduce){
   *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;scroll-behavior:auto !important}
 }`;
@@ -216,61 +239,80 @@ function safeUrl(u: string): string {
   return esc(trimmed);
 }
 
+// Literal system-font stack for SVG <text>: CSS custom properties do NOT resolve
+// inside an SVG font-family attribute, so we inline the stack (kept in sync with
+// the leading entries of --font-sans). Single-quoted multiword names, the whole
+// value double-quoted at the call site.
+const SVG_FONT =
+  "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif";
+
 /**
- * Compose the architecture diagram as inline SVG from the authored labels:
- * a centered "neutral core" node with N overlay nodes around it, each with an
- * arrow pointing INWARD to the core (dependency direction: vertical -> neutral,
- * never reverse). currentColor + var(--accent) keep it themed; the caption is
- * carried as <title>/<desc> + aria-label for screen readers. No raster, no
- * external asset. Overlay labels are authored copy, so esc() applies to them.
+ * Compose the architecture diagram as a LAYERED STACK (CuraOS = Care Oriented
+ * Stack), which is the real mental model from the charter: opt-in vertical
+ * overlays sit as a layer ON TOP of one neutral-core foundation, and they depend
+ * DOWNWARD on it. The diagram encodes that literally: a top row of amber overlay
+ * tiles, a single wide blue core foundation bar beneath, and a dependency arrow
+ * from each overlay pointing DOWN into the core. The arrow direction IS the
+ * charter invariant (vertical -> neutral, never reverse), so it reads as
+ * truthful architecture, not decoration. Semantic color: overlays --overlay-hue,
+ * core --accent, arrows neutral (currentColor = --fg-subtle on the <svg>). The
+ * caption is carried as <title>/<desc> + aria-label for screen readers. No
+ * raster, no external asset, no JS. Overlay labels are authored copy -> esc().
  */
 function architectureSvg(arch: Architecture): string {
-  const W = 600;
-  const H = 360;
-  const cx = W / 2;
-  const cy = H / 2;
-  const coreW = 168;
-  const coreH = 64;
-  const ring = 132; // radius for overlay node centers
-  const ovW = 132;
-  const ovH = 52;
-  const n = arch.overlays.length;
+  const W = 640;
+  const H = 300;
+  const padX = 24;
+  const n = Math.max(arch.overlays.length, 1);
 
-  const overlayNodes = arch.overlays
+  // Top layer: overlay tiles in an evenly spaced row.
+  const ovH = 56;
+  const ovY = 40;
+  const gap = 20;
+  const rowW = W - padX * 2;
+  const ovW = Math.min(180, (rowW - gap * (n - 1)) / n);
+  // Center the row if the tiles do not fill the full width.
+  const usedW = ovW * n + gap * (n - 1);
+  const startX = (W - usedW) / 2;
+
+  // Bottom layer: one wide core foundation bar.
+  const coreH = 64;
+  const coreY = H - coreH - 44;
+  const coreX = padX;
+  const coreW = W - padX * 2;
+  const coreMidY = coreY + coreH / 2;
+
+  const overlayTiles = arch.overlays
     .map((label, i) => {
-      // Distribute overlays evenly around the core, starting at the top.
-      const angle = (-Math.PI / 2) + (i * (2 * Math.PI)) / Math.max(n, 1);
-      const ox = cx + ring * Math.cos(angle);
-      const oy = cy + ring * Math.sin(angle);
-      const rx = ox - ovW / 2;
-      const ry = oy - ovH / 2;
-      // Arrow: from the overlay edge toward the core center, stopping short so
-      // the marker triangle lands on the core's edge, not inside it.
-      const dx = cx - ox;
-      const dy = cy - oy;
-      const dist = Math.hypot(dx, dy) || 1;
-      const ux = dx / dist;
-      const uy = dy / dist;
-      const x1 = ox + ux * (ovH / 2 + 4);
-      const y1 = oy + uy * (ovH / 2 + 4);
-      const x2 = cx - ux * (coreH / 2 + 12);
-      const y2 = cy - uy * (coreH / 2 + 12);
+      const x = startX + i * (ovW + gap);
+      const midX = x + ovW / 2;
+      // Dependency arrow: straight DOWN from the tile's bottom edge into the
+      // core's top edge (overlay depends on core). Stop short so the marker
+      // triangle lands on the core edge.
+      const y1 = ovY + ovH + 4;
+      const y2 = coreY - 6;
       return (
-        `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="currentColor" stroke-width="1.6" marker-end="url(#arr)" opacity=".7"/>` +
-        `<g><rect x="${rx.toFixed(1)}" y="${ry.toFixed(1)}" width="${ovW}" height="${ovH}" rx="10" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".85"/>` +
-        `<text x="${ox.toFixed(1)}" y="${(oy + 5).toFixed(1)}" text-anchor="middle" font-size="15" font-family="var(--font-sans)" fill="currentColor">${esc(label)}</text></g>`
+        `<line x1="${midX.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${midX.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="currentColor" stroke-width="1.6" marker-end="url(#arr)"/>` +
+        `<g><rect x="${x.toFixed(1)}" y="${ovY}" width="${ovW.toFixed(1)}" height="${ovH}" rx="9" fill="var(--overlay-quiet)" stroke="var(--overlay-hue)" stroke-width="1.6"/>` +
+        `<text x="${midX.toFixed(1)}" y="${(ovY + ovH / 2 + 5).toFixed(1)}" text-anchor="middle" font-size="14.5" font-weight="600" font-family="${SVG_FONT}" fill="var(--overlay-hue)">${esc(label)}</text></g>`
       );
     })
     .join("");
+
+  // Tiny layer labels (mono-ish, neutral) so the two layers are named.
+  const layerLabel = (x: number, y: number, anchor: string, t: string) =>
+    `<text x="${x}" y="${y}" text-anchor="${anchor}" font-size="11" font-weight="500" letter-spacing="0.08em" font-family="${SVG_FONT}" fill="currentColor" opacity=".75">${t}</text>`;
 
   return (
     `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(arch.caption)}" preserveAspectRatio="xMidYMid meet">` +
     `<title>${esc(arch.caption)}</title><desc>${esc(arch.caption)}</desc>` +
     `<defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">` +
     `<path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>` +
-    overlayNodes +
-    `<g><rect x="${cx - coreW / 2}" y="${cy - coreH / 2}" width="${coreW}" height="${coreH}" rx="12" fill="color-mix(in oklab, currentColor 12%, transparent)" stroke="currentColor" stroke-width="2"/>` +
-    `<text x="${cx}" y="${cy + 6}" text-anchor="middle" font-size="18" font-weight="700" font-family="var(--font-sans)" fill="currentColor">${esc(arch.coreLabel)}</text></g>` +
+    layerLabel(startX, ovY - 12, "start", "VERTICAL OVERLAYS (OPT-IN)") +
+    overlayTiles +
+    layerLabel(coreX, coreY - 12, "start", "FOUNDATION") +
+    `<g><rect x="${coreX}" y="${coreY}" width="${coreW}" height="${coreH}" rx="11" fill="var(--accent-quiet)" stroke="var(--accent)" stroke-width="2"/>` +
+    `<text x="${(coreX + coreW / 2).toFixed(1)}" y="${(coreMidY + 6).toFixed(1)}" text-anchor="middle" font-size="18" font-weight="700" font-family="${SVG_FONT}" fill="var(--accent)">${esc(arch.coreLabel)}</text></g>` +
     `</svg>`
   );
 }
@@ -296,18 +338,41 @@ export function renderPage(
     )
     .join("\n");
 
-  const badges = content.deployProfiles
-    .map((p) => `      <span class="badge">${esc(p.name)}</span>`)
+  const inlineLabels = content.deployProfiles
+    .map((p) => `        <li>${esc(p.name)}</li>`)
     .join("\n");
 
-  const quickstartBody = content.quickstart.lines.map((l) => esc(l)).join("\n");
+  // Render the terminal body line by line. A leading "$ " is the shell prompt;
+  // wrap just the "$" in a span so it can carry the one permitted accent texture
+  // (the rest of the command stays --fg). esc() runs on the authored text first.
+  const quickstartBody = content.quickstart.lines
+    .map((l) => {
+      const e = esc(l);
+      return e.startsWith("$ ")
+        ? `<span class="prompt">$</span>${e.slice(1)}`
+        : e;
+    })
+    .join("\n");
 
+  // Footer hrefs may carry deploy-variable tokens so the header CTAs and footer
+  // links share ONE source of truth: {docsUrl} / {demoUrl} / {releasesUrl} are
+  // resolved from the same build-time LinkTargets the CTAs use, instead of
+  // hardcoding a live host in authored content. Static links (e.g. the GitHub
+  // org) stay as literal https URLs. Substitution runs BEFORE safeUrl(), so a
+  // resolved token still goes through the scheme guard.
+  const footerHref = (raw: string): string => {
+    const resolved = raw
+      .replace(/\{docsUrl\}/g, links.docsUrl)
+      .replace(/\{demoUrl\}/g, links.demoUrl)
+      .replace(/\{releasesUrl\}/g, links.releasesUrl);
+    return safeUrl(resolved);
+  };
   const footerCols = content.footer.columns
     .map((col) => {
       const items = col.links
         .map(
           (l) =>
-            `          <li><a href="${safeUrl(l.href)}">${esc(l.label)}</a></li>`,
+            `          <li><a href="${footerHref(l.href)}">${esc(l.label)}</a></li>`,
         )
         .join("\n");
       return `      <div>\n        <h2>${esc(col.heading)}</h2>\n        <ul>\n${items}\n        </ul>\n      </div>`;
@@ -339,21 +404,23 @@ export function renderPage(
 </head>
 <body>
 ${eyebrowStrip}  <header class="hero">
-    <h1 class="h-display">${esc(content.headline)}</h1>
-    <p class="lead">${esc(content.subhead)}</p>
-    <p class="cta-row">
-      <a class="btn btn-primary" href="${safeUrl(links.docsUrl)}">Documentation</a>
-      ${demoCta}
-      <a class="btn btn-ghost" href="${safeUrl(links.releasesUrl)}">Releases</a>
-    </p>
+    <div class="wrap">
+      <h1 class="h-display">${esc(content.headline)}</h1>
+      <p class="lead">${esc(content.subhead)}</p>
+      <p class="cta-row">
+        <a class="btn btn-primary" href="${safeUrl(links.docsUrl)}">Documentation</a>
+        ${demoCta}
+        <a class="btn btn-ghost" href="${safeUrl(links.releasesUrl)}">Releases</a>
+      </p>
+    </div>
   </header>
   <main>
     <section class="positioning wrap" aria-labelledby="positioning-h">
-      <h2 id="positioning-h" class="eyebrow">Why CuraOS</h2>
-      <p>${esc(content.positioning)}</p>
-      <div class="badges">
-${badges}
-      </div>
+      <p class="eyebrow">Why CuraOS</p>
+      <p id="positioning-h" class="lead">${esc(content.positioning)}</p>
+      <ul class="inline-labels">
+${inlineLabels}
+      </ul>
     </section>
     <section class="wrap" aria-labelledby="pillars-h">
       <div class="section-head">
@@ -389,7 +456,7 @@ ${profiles}
         <h2 id="quickstart-h" class="h-section">${esc(content.quickstart.caption)}</h2>
       </div>
       <div class="terminal">
-        <div class="bar" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="bar" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="bar-title">curaos</span></div>
         <pre><code>${quickstartBody}</code></pre>
       </div>
     </section>

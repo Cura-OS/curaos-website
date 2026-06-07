@@ -22,7 +22,7 @@ pin-guard:
     bash scripts/pin-guard.sh
 
 # Build the static brochure site. Pass flags through, e.g.:
-#   just build --content-dir ../../ai/curaos/curaos-website/site-content --docs-url https://docs.curaos.io
+#   just build --content-dir content --docs-url https://curaos-docs.abualruz.com
 build *ARGS:
     bash scripts/build.sh {{ARGS}}
 
