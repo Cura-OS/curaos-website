@@ -36,14 +36,15 @@
     ]
   },
   "footer": {
+    "_comment": "Deploy-variable hrefs use {docsUrl}/{demoUrl}/{releasesUrl} tokens resolved from the same build flags as the hero CTAs, so header and footer share one source of truth (the operator never edits a live host into content). Static links (GitHub org) stay literal.",
     "columns": [
       { "heading": "Product", "links": [
-        { "label": "Documentation", "href": "https://curaos-docs.abualruz.com" },
-        { "label": "Releases", "href": "https://github.com/Cura-Care-Oriented-Stack/curaos/releases" }
+        { "label": "Documentation", "href": "{docsUrl}" },
+        { "label": "Releases", "href": "{releasesUrl}" }
       ]},
       { "heading": "Project", "links": [
         { "label": "GitHub", "href": "https://github.com/Cura-Care-Oriented-Stack" },
-        { "label": "Charter", "href": "https://curaos-docs.abualruz.com" }
+        { "label": "Charter", "href": "{docsUrl}" }
       ]}
     ],
     "note": "CuraOS is a self-hosted-first, composable care platform, in active development (pre-1.0)."

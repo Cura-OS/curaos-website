@@ -182,6 +182,47 @@ describe("renderPage: 8-section dev-platform layout", () => {
     expect(html).toContain(`href="https://github.com/Cura-Care-Oriented-Stack"`);
     expect(html).toContain("CuraOS is a self-hosted-first, composable care platform.");
   });
+
+  test("resolves footer href tokens from build-time link targets (single source of truth)", () => {
+    // Deploy-variable footer links carry {docsUrl}/{releasesUrl} tokens so the
+    // header CTAs and footer share ONE source of truth; the renderer rewrites
+    // them from LinkTargets (no live host hardcoded in authored content).
+    const tokenized: SiteContent = {
+      ...CONTENT,
+      footer: {
+        ...CONTENT.footer,
+        columns: [
+          {
+            heading: "Product",
+            links: [
+              { label: "Documentation", href: "{docsUrl}" },
+              { label: "Releases", href: "{releasesUrl}" },
+            ],
+          },
+        ],
+      },
+    };
+    const html = renderPage(tokenized, LINKS, LTR);
+    expect(html).toContain(`href="https://docs.curaos.example"`); // {docsUrl}
+    expect(html).toContain(
+      `href="https://github.com/Cura-Care-Oriented-Stack/curaos/releases"`,
+    ); // {releasesUrl}
+    expect(html).not.toContain("{docsUrl}");
+    expect(html).not.toContain("{releasesUrl}");
+  });
+
+  test("still rejects a non-http(s) scheme after footer token substitution", () => {
+    const evil: SiteContent = {
+      ...CONTENT,
+      footer: {
+        ...CONTENT.footer,
+        columns: [
+          { heading: "Bad", links: [{ label: "x", href: "javascript:alert(1)" }] },
+        ],
+      },
+    };
+    expect(() => renderPage(evil, LINKS, LTR)).toThrow(/unsafe or non-navigational/);
+  });
 });
 
 describe("renderPage: em-dash purge (curaos-no-em-dash-rule)", () => {

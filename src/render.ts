@@ -206,7 +206,7 @@ main section + section{border-top:1px solid var(--border)}
 .arch figcaption{color:var(--fg-muted);max-width:56ch;font-size:.95rem;margin:0}
 .terminal{background:var(--bg-elev);border:1px solid var(--border);border-radius:var(--radius);max-width:48rem;overflow:hidden}
 .terminal .bar{display:flex;align-items:center;gap:.4rem;padding:.6rem .9rem;border-bottom:1px solid var(--border)}
-.terminal .bar span{width:.65rem;height:.65rem;border-radius:999px;background:var(--border-strong)}
+.terminal .bar .dot{width:.65rem;height:.65rem;border-radius:999px;background:var(--border-strong)}
 .terminal .bar .bar-title{margin-inline-start:.6rem;font-family:var(--font-mono);font-size:.75rem;color:var(--fg-subtle)}
 .terminal pre{margin:0;padding:1rem 1.15rem;font-family:var(--font-mono);font-size:.9rem;line-height:1.65;color:var(--fg);overflow-x:auto;white-space:pre-wrap;word-break:break-word}
 .terminal pre .prompt{color:var(--accent)}
@@ -354,12 +354,25 @@ export function renderPage(
     })
     .join("\n");
 
+  // Footer hrefs may carry deploy-variable tokens so the header CTAs and footer
+  // links share ONE source of truth: {docsUrl} / {demoUrl} / {releasesUrl} are
+  // resolved from the same build-time LinkTargets the CTAs use, instead of
+  // hardcoding a live host in authored content. Static links (e.g. the GitHub
+  // org) stay as literal https URLs. Substitution runs BEFORE safeUrl(), so a
+  // resolved token still goes through the scheme guard.
+  const footerHref = (raw: string): string => {
+    const resolved = raw
+      .replace(/\{docsUrl\}/g, links.docsUrl)
+      .replace(/\{demoUrl\}/g, links.demoUrl)
+      .replace(/\{releasesUrl\}/g, links.releasesUrl);
+    return safeUrl(resolved);
+  };
   const footerCols = content.footer.columns
     .map((col) => {
       const items = col.links
         .map(
           (l) =>
-            `          <li><a href="${safeUrl(l.href)}">${esc(l.label)}</a></li>`,
+            `          <li><a href="${footerHref(l.href)}">${esc(l.label)}</a></li>`,
         )
         .join("\n");
       return `      <div>\n        <h2>${esc(col.heading)}</h2>\n        <ul>\n${items}\n        </ul>\n      </div>`;
@@ -443,7 +456,7 @@ ${profiles}
         <h2 id="quickstart-h" class="h-section">${esc(content.quickstart.caption)}</h2>
       </div>
       <div class="terminal">
-        <div class="bar" aria-hidden="true"><span></span><span></span><span></span><span class="bar-title">curaos</span></div>
+        <div class="bar" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="bar-title">curaos</span></div>
         <pre><code>${quickstartBody}</code></pre>
       </div>
     </section>
