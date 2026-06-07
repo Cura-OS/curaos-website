@@ -1,6 +1,6 @@
 # curaos-website
 
-Public website for CuraOS — an offline / air-gap-renderable static brochure
+Public website for CuraOS - an offline / air-gap-renderable static brochure
 site built with a Bun-native renderer (zero external egress).
 
 The build is **deliberate**: GitHub Actions (Pages publish) is
@@ -46,10 +46,10 @@ just build \
 
 ## Hosting profiles
 
-- **Cloud / on-prem / hybrid** — `hosting/nginx` image + `hosting/k8s` manifests.
-- **Air-gap** — `hosting/zarf/website.component.yaml` (composed into the signed
+- **Cloud / on-prem / hybrid** - `hosting/nginx` image + `hosting/k8s` manifests.
+- **Air-gap** - `hosting/zarf/website.component.yaml` (composed into the signed
   Zarf bundle by the release pipeline).
-- **Secondary mirror** — `.github/workflows/pages.yml` (GitHub Pages, manual).
+- **Secondary mirror** - `.github/workflows/pages.yml` (GitHub Pages, manual).
 
 The live public-domain deploy (DNS / cert / link rewrite) is operator-driven;
 see the deploy runbook for the procedure.

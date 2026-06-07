@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# build.sh — build the CuraOS public brochure static site.
+# build.sh - build the CuraOS public brochure static site.
 #
 # Resolves the authored marketing-copy dir (--content-dir, the workspace mirror
 # `ai/curaos/curaos-website/site-content/`; falls back to the in-repo
 # examples/site-content fixture) and the build-time link targets + locale, then
 # invokes the Bun-native renderer to emit a self-contained `site/` with
-# RELATIVE-ONLY asset references (zero external egress — air-gap renderable).
+# RELATIVE-ONLY asset references (zero external egress - air-gap renderable).
 # External docs/demo/releases links are <a href> NAVIGATION, not fetched assets.
 #
 # Usage:
@@ -24,7 +24,7 @@ RELEASES_URL="$(parse_flag releases-url "$@")"; RELEASES_URL="${RELEASES_URL:-ht
 LANG_TAG="$(parse_flag lang "$@")"; LANG_TAG="${LANG_TAG:-en}"
 DIR_ATTR="$(parse_flag dir "$@")"; DIR_ATTR="${DIR_ATTR:-ltr}"
 
-have bun || die "bun not installed — run: mise install (or install bun 1.1.42)"
+have bun || die "bun not installed - run: mise install (or install bun 1.1.42)"
 
 log "render brochure (content=$CONTENT_DIR docs=$DOCS_URL demo=$DEMO_URL live=$DEMO_LIVE lang=$LANG_TAG dir=$DIR_ATTR)"
 mkdir -p "$OUT_DIR"

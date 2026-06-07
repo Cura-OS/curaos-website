@@ -7,7 +7,7 @@
 components:
   - name: curaos-website
     required: false
-    description: "CuraOS public brochure site — offline static served by NGINX. Zero-egress."
+    description: "CuraOS public brochure site - offline static served by NGINX. Zero-egress."
     manifests:
       - name: curaos-website
         files:

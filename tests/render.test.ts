@@ -14,7 +14,6 @@ const CONTENT: SiteContent = {
   subhead: "A generic neutral core with opt-in overlays.",
   positioning: "Self-hosted first. Event-led. Multi-tenant.",
   description: "Self-hosted-first composable platform.",
-  valueProps: ["Self-hosted first", "Generic before vertical"],
   pillars: [
     { icon: "shield", title: "Self-hosted first", blurb: "Deploy on your own infrastructure." },
     { icon: "layers", title: "Generic before vertical", blurb: "One reusable neutral core." },
@@ -61,23 +60,35 @@ const LINKS: LinkTargets = {
 const LTR: RenderOptions = { lang: "en", dir: "ltr" };
 
 describe("renderPage: link injection", () => {
-  test("injects the docs, demo, and releases link targets", () => {
+  test("injects the docs + releases link targets", () => {
     const html = renderPage(CONTENT, LINKS, LTR);
     expect(html).toContain(`href="https://docs.curaos.example"`);
-    expect(html).toContain(`href="https://demo.curaos.example"`);
     expect(html).toContain(`href="https://github.com/Cura-Care-Oriented-Stack/curaos/releases"`);
   });
 
-  test("renders the demo link as a 'coming soon' placeholder when not live", () => {
-    const html = renderPage(CONTENT, LINKS, LTR);
-    expect(html).toContain(`data-status="coming-soon"`);
-    expect(html.toLowerCase()).toContain("coming soon");
+  test("injects the demo link target only when the demo is live", () => {
+    const live = renderPage(CONTENT, { ...LINKS, demoLive: true }, LTR);
+    expect(live).toContain(`href="https://demo.curaos.example"`);
   });
 
-  test("renders the demo link as a live CTA when demoLive is true", () => {
+  test("renders the demo CTA as a NON-navigational placeholder when not live", () => {
+    const html = renderPage(CONTENT, LINKS, LTR);
+    // Coming-soon affordance is present...
+    expect(html).toContain(`data-status="coming-soon"`);
+    expect(html.toLowerCase()).toContain("coming soon");
+    // ...and it is NOT a clickable link to the (dead) demo URL: no href to the
+    // demo target anywhere, and the CTA is a <span role="link">, not an <a>.
+    expect(html).not.toContain(`href="https://demo.curaos.example"`);
+    expect(html).not.toMatch(/<a [^>]*data-status="coming-soon"/);
+    expect(html).toMatch(/<span class="btn[^"]*" role="link" aria-disabled="true" data-status="coming-soon"/);
+  });
+
+  test("renders the demo CTA as a real live link when demoLive is true", () => {
     const html = renderPage(CONTENT, { ...LINKS, demoLive: true }, LTR);
     expect(html).not.toContain(`data-status="coming-soon"`);
     expect(html.toLowerCase()).not.toContain("coming soon");
+    // Live: it IS an <a href> to the demo tenant.
+    expect(html).toMatch(/<a class="btn btn-ghost" href="https:\/\/demo\.curaos\.example">Live demo<\/a>/);
   });
 });
 
@@ -157,15 +168,6 @@ describe("renderPage: 8-section dev-platform layout", () => {
     expect(html).toContain("<h2>Project</h2>");
     expect(html).toContain(`href="https://github.com/Cura-Care-Oriented-Stack"`);
     expect(html).toContain("CuraOS is a self-hosted-first, composable care platform.");
-  });
-
-  test("falls back to valueProps for the grid when pillars is empty (back-compat)", () => {
-    const noPillars = { ...CONTENT, pillars: [] };
-    const html = renderPage(noPillars, LINKS, LTR);
-    // 0 pillars -> 2 valueProps used + 2 deploy profiles = 4 cards.
-    const cards = html.match(/<article class="card">/g) ?? [];
-    expect(cards.length).toBe(4);
-    expect(html).toContain("Self-hosted first");
   });
 });
 

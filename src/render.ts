@@ -61,8 +61,6 @@ export interface SiteContent {
   readonly positioning: string;
   /** Kept for <meta description>. */
   readonly description: string;
-  /** Kept for back-compat; pillars supersede it in the layout grid. */
-  readonly valueProps?: readonly string[];
   readonly pillars: readonly Pillar[];
   readonly architecture: Architecture;
   readonly deployProfiles: readonly DeployProfile[];
@@ -282,18 +280,9 @@ export function renderPage(
   links: LinkTargets,
   opts: RenderOptions,
 ): string {
-  // Pillars supersede valueProps in the grid; fall back to valueProps only when
-  // pillars is empty (back-compat with older fixtures).
-  const pillarSource: readonly Pillar[] =
-    content.pillars && content.pillars.length > 0
-      ? content.pillars
-      : (content.valueProps ?? []).map((p) => ({
-          icon: "puzzle",
-          title: p,
-          blurb: "",
-        }));
-
-  const pillarCards = pillarSource
+  // pillars is the single source for the principles grid (validated non-empty in
+  // loadContent); there is no parallel valueProps path.
+  const pillarCards = content.pillars
     .map(
       (p) =>
         `      <article class="card">${icon(p.icon)}<h3>${esc(p.title)}</h3>${p.blurb ? `<p>${esc(p.blurb)}</p>` : ""}</article>`,
@@ -325,12 +314,14 @@ export function renderPage(
     })
     .join("\n");
 
-  // The demo link is NAVIGATION; until S7 (#516) lands it is rendered with a
-  // visible "coming soon" affordance (data-status + label), never as a live CTA.
-  const demoAttrs = links.demoLive ? "" : ' data-status="coming-soon" aria-disabled="true"';
-  const demoLabel = links.demoLive
-    ? "Live demo"
-    : `Live demo<span class="coming-soon-tag">(coming soon)</span>`;
+  // The demo CTA is NAVIGATION only once the demo tenant is live (S7 #516).
+  // Until then it is rendered as a NON-navigational, non-clickable affordance:
+  // no href (so it cannot link through to a dead URL), role="link" +
+  // aria-disabled="true" for assistive tech, and CSS pointer-events:none. Once
+  // demoLive is true it becomes a real <a href> to the demo tenant.
+  const demoCta = links.demoLive
+    ? `<a class="btn btn-ghost" href="${safeUrl(links.demoUrl)}">Live demo</a>`
+    : `<span class="btn btn-ghost" role="link" aria-disabled="true" data-status="coming-soon">Live demo<span class="coming-soon-tag">(coming soon)</span></span>`;
 
   const eyebrowStrip = content.eyebrow
     ? `  <div class="eyebrow-strip"><p class="eyebrow">${esc(content.eyebrow)}</p></div>\n`
@@ -352,7 +343,7 @@ ${eyebrowStrip}  <header class="hero">
     <p class="lead">${esc(content.subhead)}</p>
     <p class="cta-row">
       <a class="btn btn-primary" href="${safeUrl(links.docsUrl)}">Documentation</a>
-      <a class="btn btn-ghost" href="${safeUrl(links.demoUrl)}"${demoAttrs}>${demoLabel}</a>
+      ${demoCta}
       <a class="btn btn-ghost" href="${safeUrl(links.releasesUrl)}">Releases</a>
     </p>
   </header>

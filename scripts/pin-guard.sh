@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# pin-guard.sh — static supply-chain guard for curaos-website.
+# pin-guard.sh - static supply-chain guard for curaos-website.
 #
 # Fails when a GitHub Action is not SHA-pinned, a base image is not digest-pinned,
 # or a K8s/Zarf manifest image ref is neither digest-pinned nor an explicit

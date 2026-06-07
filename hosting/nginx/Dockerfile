@@ -1,7 +1,7 @@
 # NGINX static host for the CuraOS public brochure site.
 #
 # The image bundles the pre-built static output (site/) and serves it with zero
-# external egress — suitable for cloud, on-prem, hybrid, and air-gap (Zarf)
+# external egress - suitable for cloud, on-prem, hybrid, and air-gap (Zarf)
 # profiles. The base image is digest-pinned per the version-pinning policy;
 # Renovate keeps the digest fresh.
 #
