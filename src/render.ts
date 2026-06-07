@@ -391,13 +391,15 @@ export function renderPage(
 </head>
 <body>
 ${eyebrowStrip}  <header class="hero">
-    <h1 class="h-display">${esc(content.headline)}</h1>
-    <p class="lead">${esc(content.subhead)}</p>
-    <p class="cta-row">
-      <a class="btn btn-primary" href="${safeUrl(links.docsUrl)}">Documentation</a>
-      ${demoCta}
-      <a class="btn btn-ghost" href="${safeUrl(links.releasesUrl)}">Releases</a>
-    </p>
+    <div class="wrap">
+      <h1 class="h-display">${esc(content.headline)}</h1>
+      <p class="lead">${esc(content.subhead)}</p>
+      <p class="cta-row">
+        <a class="btn btn-primary" href="${safeUrl(links.docsUrl)}">Documentation</a>
+        ${demoCta}
+        <a class="btn btn-ghost" href="${safeUrl(links.releasesUrl)}">Releases</a>
+      </p>
+    </div>
   </header>
   <main>
     <section class="positioning wrap" aria-labelledby="positioning-h">
