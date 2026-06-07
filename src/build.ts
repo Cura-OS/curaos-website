@@ -1,8 +1,8 @@
-// build.ts — Bun-native static brochure build driver.
+// build.ts: Bun-native static brochure build driver.
 //
 // Loads authored marketing copy (site.json) from the resolved content dir,
 // injects the build-time link targets + locale flags, renders the page via the
-// pure renderer, and writes a self-contained `site/` (index.html only — the
+// pure renderer, and writes a self-contained `site/` (index.html only; the
 // stylesheet is inlined, so there are no remote asset references). Run by
 // scripts/build.sh, which resolves --content-dir (workspace mirror or fixture)
 // and the --docs-url/--demo-url/--releases-url/--lang/--dir flags.
@@ -28,8 +28,21 @@ export function loadContent(contentDir: string): SiteContent {
     throw new Error(`authored copy not found: ${file} (expected site.json in the content dir)`);
   }
   const raw = JSON.parse(readFileSync(file, "utf8")) as SiteContent;
-  if (!raw.siteName || !Array.isArray(raw.deployProfiles)) {
-    throw new Error(`malformed site.json in ${contentDir}: missing siteName or deployProfiles`);
+  // Forward migration of the single SiteContent schema (no parallel -v2 path):
+  // the new required fields are validated alongside the legacy ones. valueProps
+  // stays optional so older fixtures do not hard-fail; the renderer prefers
+  // pillars for the grid and falls back to valueProps only when pillars empty.
+  const missing: string[] = [];
+  if (!raw.siteName) missing.push("siteName");
+  if (!raw.headline) missing.push("headline");
+  if (!raw.subhead) missing.push("subhead");
+  if (!Array.isArray(raw.pillars) || raw.pillars.length === 0) missing.push("pillars");
+  if (!raw.architecture || !Array.isArray(raw.architecture.overlays)) missing.push("architecture");
+  if (!Array.isArray(raw.deployProfiles)) missing.push("deployProfiles");
+  if (!raw.quickstart || !Array.isArray(raw.quickstart.lines)) missing.push("quickstart");
+  if (!raw.footer || !Array.isArray(raw.footer.columns)) missing.push("footer");
+  if (missing.length > 0) {
+    throw new Error(`malformed site.json in ${contentDir}: missing or invalid ${missing.join(", ")}`);
   }
   return raw;
 }

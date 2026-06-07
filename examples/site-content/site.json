@@ -1,18 +1,57 @@
 {
   "siteName": "CuraOS",
   "tagline": "Composable, self-hosted-first care platform",
-  "description": "CuraOS is a composable platform with a generic neutral core and opt-in vertical overlays (Health, Education, ERP). Ship small, ship independently, compose per tenant and market — on your own infrastructure.",
+  "eyebrow": "Care Oriented Stack",
+  "headline": "The care platform you actually own",
+  "subhead": "A generic neutral core with opt-in Health, Education, and ERP overlays. Ship small, ship independently, compose per tenant, run it on your own infrastructure.",
+  "positioning": "Self-hosted first. Event-led. Multi-tenant from one codebase. No managed-cloud lock-in.",
+  "description": "CuraOS is a composable, self-hosted-first platform: a generic neutral core with opt-in vertical overlays (Health, Education, ERP). Deploy on cloud, on-prem, hybrid, or fully air-gapped.",
   "valueProps": [
-    "Self-hosted first — deployable on customer infrastructure, no managed-cloud lock-in.",
-    "Generic before vertical — a reusable neutral core that verticals extend, never fork.",
-    "Event-led — durable messaging with versioned contracts; sync APIs are secondary.",
-    "Multi-tenant — SaaS, on-prem, and hybrid from one codebase, with tenant data isolation.",
-    "Builder-led — every experience expressed through the workflow/BPM engine and app/site builder."
+    "Self-hosted first: deployable on customer infrastructure, no managed-cloud lock-in.",
+    "Generic before vertical: a reusable neutral core that verticals extend, never fork.",
+    "Event-led: durable messaging with versioned contracts; sync APIs are secondary.",
+    "Multi-tenant: SaaS, on-prem, and hybrid from one codebase, with tenant data isolation.",
+    "Builder-led: every experience expressed through the workflow engine and app/site builder."
   ],
+  "pillars": [
+    { "icon": "shield", "title": "Self-hosted first", "blurb": "Deploy on your own infrastructure. Hybrid and fully air-gapped are first-class, not afterthoughts. No managed-cloud lock-in." },
+    { "icon": "layers", "title": "Generic before vertical", "blurb": "One reusable neutral core. Verticals extend it through documented seams; they never fork it." },
+    { "icon": "bolt", "title": "Event-led", "blurb": "Durable, versioned event contracts are the primary integration path. Sync APIs are secondary." },
+    { "icon": "building", "title": "Multi-tenant", "blurb": "SaaS, on-prem, and hybrid from one codebase, with strict tenant data isolation and a PHI boundary." },
+    { "icon": "blocks", "title": "Builder-led", "blurb": "Every surface is generated from workflow definitions and the app/site builder. Configure, do not hand-code." },
+    { "icon": "puzzle", "title": "Composable", "blurb": "Services, libraries, and clients ship independently and combine per tenant and per market." }
+  ],
+  "architecture": {
+    "coreLabel": "Neutral core",
+    "overlays": ["HealthStack", "EducationStack", "ERP"],
+    "caption": "Vertical overlays depend on the neutral core. The dependency direction is always toward the core, never the reverse."
+  },
   "deployProfiles": [
-    { "name": "Cloud SaaS", "blurb": "Per-tenant, vendor-managed, horizontally scaled." },
-    { "name": "On-prem", "blurb": "Single tenant on customer infrastructure; overlays opt-in." },
-    { "name": "Hybrid", "blurb": "Vendor control plane plus customer-hosted data plane." },
-    { "name": "Home lab / air-gap", "blurb": "Single tenant, fully offline, same artifacts, zero external calls." }
-  ]
+    { "icon": "cloud", "name": "Cloud SaaS", "blurb": "Per-tenant, vendor-managed, horizontally scaled." },
+    { "icon": "server", "name": "On-prem", "blurb": "Single tenant on customer infrastructure; overlays opt-in." },
+    { "icon": "split", "name": "Hybrid", "blurb": "Vendor control plane plus a customer-hosted data plane." },
+    { "icon": "lock", "name": "Home lab / air-gap", "blurb": "Single tenant, fully offline, same artifacts, zero external calls." }
+  ],
+  "quickstart": {
+    "caption": "Compose a tenant from the neutral core plus the overlays you need.",
+    "lines": [
+      "$ curaos init acme --profile on-prem",
+      "$ curaos overlay add healthstack",
+      "$ curaos deploy --air-gap",
+      "ok: acme up on your infrastructure, zero external calls"
+    ]
+  },
+  "footer": {
+    "columns": [
+      { "heading": "Product", "links": [
+        { "label": "Documentation", "href": "https://docs.curaos.abualruz.com" },
+        { "label": "Releases", "href": "https://github.com/Cura-Care-Oriented-Stack/curaos/releases" }
+      ]},
+      { "heading": "Project", "links": [
+        { "label": "GitHub", "href": "https://github.com/Cura-Care-Oriented-Stack" },
+        { "label": "Charter", "href": "https://docs.curaos.abualruz.com" }
+      ]}
+    ],
+    "note": "CuraOS is a self-hosted-first, composable care platform."
+  }
 }

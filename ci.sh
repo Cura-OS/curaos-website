@@ -11,7 +11,8 @@
 #   4 typecheck (tsc)
 #   5 build (Bun-native static brochure → site/)
 #   6 offline smoke (zero-egress static render)
-#   7 bun test (unit + contract)
+#   7 em-dash gate (no U+2014/U+2013 in sources or built HTML)
+#   8 bun test (unit + contract)
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT"
@@ -40,7 +41,26 @@ bash scripts/build.sh
 step "6 offline smoke (zero-egress static render)"
 bash scripts/offline-smoke.sh
 
-step "7 bun test (unit + contract)"
+step "7 em-dash gate (no U+2014/U+2013)"
+# Per ai/rules/curaos_no_em_dash_rule.md: zero em/en dashes in sources or in the
+# built HTML (build ran in step 5, so `site` is scanned too). -I skips binaries.
+# GNU grep (Linux CI) supports -P with \x{...}; BSD grep (macOS local) does not,
+# so fall back to a literal em/en-dash character class under a UTF-8 locale. Both
+# paths match the same two codepoints, so the gate is identical across hosts.
+em_targets=(src examples site)
+em_hits=""
+if echo | grep -qP 'x' 2>/dev/null; then
+  em_hits="$(grep -rIlP '[\x{2014}\x{2013}]' "${em_targets[@]}" 2>/dev/null || true)"
+else
+  em_hits="$(LC_ALL=en_US.UTF-8 grep -rIl '[—–]' "${em_targets[@]}" 2>/dev/null || true)"
+fi
+if [[ -n "$em_hits" ]]; then
+  printf 'FAIL: em-dash (U+2014) or en-dash (U+2013) found in:\n%s\n' "$em_hits" >&2
+  exit 1
+fi
+printf 'em-dash gate: PASS (no U+2014/U+2013 in %s)\n' "${em_targets[*]}"
+
+step "8 bun test (unit + contract)"
 bun test
 
 printf '\nlocal CI gate: PASS\n'
