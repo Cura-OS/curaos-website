@@ -31,6 +31,48 @@ const CONTENT: SiteContent = {
     { icon: "cloud", name: "Cloud SaaS", blurb: "Per-tenant managed." },
     { icon: "lock", name: "Air-gap", blurb: "Fully offline." },
   ],
+  apps: {
+    caption: "Nineteen apps, live now",
+    intro: "Every app is generated from the same definitions.",
+    groups: [
+      {
+        icon: "blocks",
+        heading: "Platform",
+        blurb: "Operate the system",
+        apps: [
+          { name: "Admin", blurb: "Platform administration.", href: "https://admin.abualruz.com" },
+          { name: "Builder", blurb: "App and site builder.", href: "https://builder.abualruz.com" },
+        ],
+      },
+      {
+        icon: "user",
+        heading: "Personal suite",
+        apps: [{ name: "My tasks", blurb: "Personal task management.", href: "https://my-tasks.abualruz.com" }],
+      },
+    ],
+  },
+  capabilities: {
+    caption: "The platform underneath",
+    intro: "Every app sits on the same foundation.",
+    items: [
+      { icon: "workflow", title: "Workflow and BPM core", blurb: "Orchestrates tasks and SLA." },
+      { icon: "blocks", title: "App and site builder", blurb: "Generates surfaces." },
+      { icon: "wrench", title: "Automation core", blurb: "Low-code actions." },
+    ],
+  },
+  demoLinks: {
+    caption: "See it running",
+    intro: "These are live, reachable surfaces.",
+    links: [
+      { label: "Admin console", href: "https://admin.abualruz.com", blurb: "Administration" },
+      { label: "API gateway", href: "https://api.abualruz.com", blurb: "Backend services" },
+    ],
+  },
+  getStarted: {
+    caption: "Run it on your own infrastructure",
+    body: "CuraOS deploys to Kubernetes.",
+    lines: ["$ git clone https://github.com/Cura-Care-Oriented-Stack/curaos", "ok: neutral core up"],
+  },
   quickstart: {
     caption: "Compose a tenant from the core plus the overlays you need.",
     lines: ["$ curaos init acme --profile on-prem", "ok: acme up, zero external calls"],
@@ -128,11 +170,12 @@ describe("renderPage: 8-section dev-platform layout", () => {
     expect(html).not.toContain(`class="badge"`);
   });
 
-  test("renders one pillar card per pillar with an inline svg icon", () => {
+  test("renders one .card per pillar, capability, and deploy profile with an inline svg icon", () => {
     const html = renderPage(CONTENT, LINKS, LTR);
     const cards = html.match(/<article class="card">/g) ?? [];
-    // 6 pillars + 2 deploy profiles = 8 cards.
-    expect(cards.length).toBe(8);
+    // 6 pillars + 3 capabilities + 2 deploy profiles = 11 .card articles.
+    // (Apps render as .app-card and live links as .linkrow, not .card.)
+    expect(cards.length).toBe(11);
     expect(html).toContain("Builder-led");
     // Icons are inline SVG (currentColor line icons), not <img>/icon font.
     expect(html).toContain(`<svg class="ic"`);
@@ -222,6 +265,82 @@ describe("renderPage: 8-section dev-platform layout", () => {
       },
     };
     expect(() => renderPage(evil, LINKS, LTR)).toThrow(/unsafe or non-navigational/);
+  });
+});
+
+describe("renderPage: product overview, capabilities, live surfaces", () => {
+  test("renders a sticky top nav with the brand and section anchors", () => {
+    const html = renderPage(CONTENT, LINKS, LTR);
+    expect(html).toContain(`class="topnav"`);
+    expect(html).toContain(`class="brand"`);
+    expect(html).toContain(`href="#apps-h"`);
+    expect(html).toContain(`href="#cap-h"`);
+    // The docs CTA in the nav points at the resolved docs URL.
+    expect(html).toMatch(/<a class="nav-cta" href="https:\/\/docs\.curaos\.example"/);
+  });
+
+  test("renders grouped app cards that link to the live app surfaces", () => {
+    const html = renderPage(CONTENT, LINKS, LTR);
+    expect(html).toContain("Nineteen apps, live now");
+    expect(html).toContain(`class="app-group-head"`);
+    expect(html).toContain("Platform");
+    expect(html).toContain("Personal suite");
+    // App with an href becomes a real anchor card to the live surface.
+    expect(html).toMatch(/<a class="app-card" href="https:\/\/admin\.abualruz\.com">/);
+    expect(html).toMatch(/<a class="app-card" href="https:\/\/my-tasks\.abualruz\.com">/);
+    // The bare host is surfaced as a mono hint.
+    expect(html).toContain("admin.abualruz.com");
+  });
+
+  test("renders the capabilities grid", () => {
+    const html = renderPage(CONTENT, LINKS, LTR);
+    expect(html).toContain("The platform underneath");
+    expect(html).toContain("Workflow and BPM core");
+    expect(html).toContain("Automation core");
+  });
+
+  test("renders the live-surfaces link rows with reachable URLs", () => {
+    const html = renderPage(CONTENT, LINKS, LTR);
+    expect(html).toContain("See it running");
+    expect(html).toMatch(/<a class="linkrow" href="https:\/\/api\.abualruz\.com">/);
+    expect(html).toContain("Admin console");
+  });
+
+  test("renders the self-host get-started section with a terminal", () => {
+    const html = renderPage(CONTENT, LINKS, LTR);
+    expect(html).toContain(`class="getstarted"`);
+    expect(html).toContain("Run it on your own infrastructure");
+    expect(html).toContain("ok: neutral core up");
+  });
+
+  test("omits the optional sections entirely when they are not authored", () => {
+    const minimal: SiteContent = {
+      ...CONTENT,
+      apps: undefined,
+      capabilities: undefined,
+      demoLinks: undefined,
+      getStarted: undefined,
+    };
+    const html = renderPage(minimal, LINKS, LTR);
+    expect(html).not.toContain(`id="apps-h"`);
+    expect(html).not.toContain(`id="cap-h"`);
+    expect(html).not.toContain(`class="getstarted"`);
+    // The nav still renders the always-present anchors.
+    expect(html).toContain(`href="#arch-h"`);
+    expect(html).not.toContain(`href="#apps-h"`);
+  });
+
+  test("resolves app and live-link href tokens from build-time targets", () => {
+    const tokenized: SiteContent = {
+      ...CONTENT,
+      demoLinks: {
+        caption: "See it running",
+        links: [{ label: "Documentation", href: "{docsUrl}" }],
+      },
+    };
+    const html = renderPage(tokenized, LINKS, LTR);
+    expect(html).toContain(`href="https://docs.curaos.example"`);
+    expect(html).not.toContain("{docsUrl}");
   });
 });
 

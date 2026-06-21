@@ -114,6 +114,82 @@ export function loadContent(contentDir: string): SiteContent {
     }
   }
 
+  // Optional sections (apps / capabilities / demoLinks / getStarted): the
+  // renderer renders these only when present, and the minimal standalone fixture
+  // omits them. So we validate them ONLY when authored (back-compat with the
+  // fixture + tests), but when authored every dereferenced field must be valid.
+  if (raw.apps !== undefined) {
+    if (typeof raw.apps !== "object" || raw.apps === null) {
+      missing.push("apps");
+    } else {
+      if (!str(raw.apps.caption)) missing.push("apps.caption");
+      if (!Array.isArray(raw.apps.groups) || raw.apps.groups.length === 0) {
+        missing.push("apps.groups");
+      } else {
+        raw.apps.groups.forEach((g, gi) => {
+          if (!str(g?.heading)) missing.push(`apps.groups[${gi}].heading`);
+          if (!Array.isArray(g?.apps) || g.apps.length === 0) {
+            missing.push(`apps.groups[${gi}].apps`);
+          } else {
+            g.apps.forEach((a: { name?: unknown; blurb?: unknown }, ai: number) => {
+              if (!str(a?.name)) missing.push(`apps.groups[${gi}].apps[${ai}].name`);
+              if (!str(a?.blurb)) missing.push(`apps.groups[${gi}].apps[${ai}].blurb`);
+            });
+          }
+        });
+      }
+    }
+  }
+
+  if (raw.capabilities !== undefined) {
+    if (typeof raw.capabilities !== "object" || raw.capabilities === null) {
+      missing.push("capabilities");
+    } else {
+      if (!str(raw.capabilities.caption)) missing.push("capabilities.caption");
+      if (!Array.isArray(raw.capabilities.items) || raw.capabilities.items.length === 0) {
+        missing.push("capabilities.items");
+      } else {
+        raw.capabilities.items.forEach((c, ci) => {
+          if (!str(c?.icon)) missing.push(`capabilities.items[${ci}].icon`);
+          if (!str(c?.title)) missing.push(`capabilities.items[${ci}].title`);
+          if (!str(c?.blurb)) missing.push(`capabilities.items[${ci}].blurb`);
+        });
+      }
+    }
+  }
+
+  if (raw.demoLinks !== undefined) {
+    if (typeof raw.demoLinks !== "object" || raw.demoLinks === null) {
+      missing.push("demoLinks");
+    } else {
+      if (!str(raw.demoLinks.caption)) missing.push("demoLinks.caption");
+      if (!Array.isArray(raw.demoLinks.links) || raw.demoLinks.links.length === 0) {
+        missing.push("demoLinks.links");
+      } else {
+        raw.demoLinks.links.forEach((l, li) => {
+          if (!str(l?.label)) missing.push(`demoLinks.links[${li}].label`);
+          if (!str(l?.href)) missing.push(`demoLinks.links[${li}].href`);
+        });
+      }
+    }
+  }
+
+  if (raw.getStarted !== undefined) {
+    if (typeof raw.getStarted !== "object" || raw.getStarted === null) {
+      missing.push("getStarted");
+    } else {
+      if (!str(raw.getStarted.caption)) missing.push("getStarted.caption");
+      if (!str(raw.getStarted.body)) missing.push("getStarted.body");
+      if (!Array.isArray(raw.getStarted.lines) || raw.getStarted.lines.length === 0) {
+        missing.push("getStarted.lines");
+      } else {
+        raw.getStarted.lines.forEach((l, i) => {
+          if (typeof l !== "string") missing.push(`getStarted.lines[${i}]`);
+        });
+      }
+    }
+  }
+
   if (missing.length > 0) {
     throw new Error(`malformed site.json in ${contentDir}: missing or invalid ${missing.join(", ")}`);
   }
