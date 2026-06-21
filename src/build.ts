@@ -190,6 +190,42 @@ export function loadContent(contentDir: string): SiteContent {
     }
   }
 
+  // stats[] (hero strip) and status (shipped-vs-roadmap grid): both optional; the
+  // renderer renders them only when present. Validate every dereferenced field
+  // when authored.
+  if (raw.stats !== undefined) {
+    if (!Array.isArray(raw.stats) || raw.stats.length === 0) {
+      missing.push("stats");
+    } else {
+      raw.stats.forEach((s, i) => {
+        if (!str(s?.value)) missing.push(`stats[${i}].value`);
+        if (!str(s?.label)) missing.push(`stats[${i}].label`);
+      });
+    }
+  }
+
+  if (raw.status !== undefined) {
+    if (typeof raw.status !== "object" || raw.status === null) {
+      missing.push("status");
+    } else {
+      if (!str(raw.status.caption)) missing.push("status.caption");
+      if (!Array.isArray(raw.status.columns) || raw.status.columns.length === 0) {
+        missing.push("status.columns");
+      } else {
+        raw.status.columns.forEach((c, ci) => {
+          if (!str(c?.heading)) missing.push(`status.columns[${ci}].heading`);
+          if (!Array.isArray(c?.items) || c.items.length === 0) {
+            missing.push(`status.columns[${ci}].items`);
+          } else {
+            c.items.forEach((t: unknown, ti: number) => {
+              if (!str(t)) missing.push(`status.columns[${ci}].items[${ti}]`);
+            });
+          }
+        });
+      }
+    }
+  }
+
   if (missing.length > 0) {
     throw new Error(`malformed site.json in ${contentDir}: missing or invalid ${missing.join(", ")}`);
   }
