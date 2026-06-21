@@ -110,6 +110,25 @@ export interface GetStarted {
   readonly lines: readonly string[];
 }
 
+/** One headline stat in the hero stat strip (live, verifiable count). */
+export interface Stat {
+  readonly value: string;
+  readonly label: string;
+}
+
+/** One column of the shipped-vs-roadmap honesty grid. */
+export interface StatusColumn {
+  readonly heading: string;
+  readonly items: readonly string[];
+}
+
+/** Shipped-today vs on-the-roadmap honesty section. */
+export interface Status {
+  readonly caption: string;
+  readonly intro?: string;
+  readonly columns: readonly StatusColumn[];
+}
+
 export interface SiteContent {
   readonly siteName: string;
   /** Kept for <title>/meta. */
@@ -125,6 +144,10 @@ export interface SiteContent {
   readonly deployProfiles: readonly DeployProfile[];
   readonly quickstart: Quickstart;
   readonly footer: Footer;
+  /** Hero stat strip (live counts). Optional; rendered when present. */
+  readonly stats?: readonly Stat[];
+  /** Shipped-vs-roadmap honesty grid. Optional; rendered when present. */
+  readonly status?: Status;
   /** Product-overview section (grouped live apps). Optional; rendered when present. */
   readonly apps?: Apps;
   /** Platform-capabilities section. Optional; rendered when present. */
@@ -301,6 +324,19 @@ main section + section{border-top:1px solid var(--border)}
 .stats li{display:flex;flex-direction:column;gap:.15rem}
 .stats .n{font-size:clamp(1.8rem,1.4rem + 1.2vw,2.4rem);font-weight:700;letter-spacing:-.02em;color:var(--accent-fg);font-family:var(--font-mono)}
 .stats .l{font-size:.85rem;color:var(--fg-muted)}
+/* Shipped-vs-roadmap honesty grid: two columns, hairline-split, semantic dots. */
+.status-grid{display:grid;gap:1px;grid-template-columns:1fr 1fr;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-top:1.5rem}
+@media (max-width:640px){.status-grid{grid-template-columns:1fr}}
+.status-col{background:var(--surface);padding:1.5rem 1.6rem 1.7rem}
+.status-col h3{font-family:var(--font-mono);font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;display:flex;align-items:center;gap:.5rem;margin:0 0 1.1rem;color:var(--fg)}
+.status-col h3 .dot{width:8px;height:8px;border-radius:50%;flex:none}
+.status-col.is-shipped h3 .dot{background:#188a4c}
+.status-col.is-road h3 .dot{background:var(--overlay-hue)}
+.status-col ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.8rem}
+.status-col li{display:grid;grid-template-columns:1.1rem 1fr;gap:.6rem;font-size:.92rem;color:var(--fg);align-items:start;line-height:1.5}
+.status-col li .si{width:1.05rem;height:1.05rem;margin-top:.15rem;flex:none}
+.status-col.is-shipped li .si{color:#188a4c}
+.status-col.is-road li .si{color:var(--overlay-hue)}
 .grid{display:grid;gap:var(--gap)}
 .grid-3{grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr))}
 .grid-4{grid-template-columns:repeat(auto-fit,minmax(min(100%,13rem),1fr))}
@@ -665,6 +701,57 @@ ${rows}
       })()
     : "";
 
+  // Hero stat strip: live, verifiable counts. Rendered inside the hero when authored.
+  const statsStrip = content.stats?.length
+    ? `<ul class="stats" aria-label="At a glance">\n` +
+      content.stats
+        .map(
+          (s) =>
+            `        <li><span class="n">${esc(s.value)}</span><span class="l">${esc(s.label)}</span></li>`,
+        )
+        .join("\n") +
+      `\n      </ul>`
+    : "";
+
+  // Shipped-vs-roadmap honesty grid. The first column reads as shipped (green),
+  // the rest as roadmap (amber); a single check / clock icon per item. This is
+  // the credibility spine of a pre-1.0 infra brochure: never overclaim.
+  const CHECK =
+    '<svg class="si" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4 10-10"/></svg>';
+  const CLOCK =
+    '<svg class="si" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+  const statusSection = content.status?.columns.length
+    ? (() => {
+        const cols = content.status!.columns
+          .map((col, i) => {
+            const shipped = i === 0;
+            const ic = shipped ? CHECK : CLOCK;
+            const items = col.items
+              .map((t) => `          <li>${ic}<span>${esc(t)}</span></li>`)
+              .join("\n");
+            return (
+              `      <div class="status-col ${shipped ? "is-shipped" : "is-road"}">\n` +
+              `        <h3><span class="dot" aria-hidden="true"></span>${esc(col.heading)}</h3>\n` +
+              `        <ul>\n${items}\n        </ul>\n` +
+              `      </div>`
+            );
+          })
+          .join("\n");
+        const intro = content.status!.intro
+          ? `        <p class="lead">${esc(content.status!.intro)}</p>\n`
+          : "";
+        return `    <section class="wrap" aria-labelledby="status-h">
+      <div class="section-head">
+        <p class="eyebrow">Pre-1.0 / active buildout</p>
+        <h2 id="status-h" class="h-section">${esc(content.status!.caption)}</h2>
+${intro}      </div>
+      <div class="status-grid">
+${cols}
+      </div>
+    </section>`;
+      })()
+    : "";
+
   // Top nav: brand + section anchors + the docs CTA.
   const navItems: string[] = [];
   if (content.apps) navItems.push(`<li><a href="#apps-h">Apps</a></li>`);
@@ -672,6 +759,7 @@ ${rows}
     navItems.push(`<li><a href="#cap-h">Capabilities</a></li>`);
   navItems.push(`<li><a href="#arch-h">Architecture</a></li>`);
   navItems.push(`<li><a href="#deploy-h">Deploy</a></li>`);
+  if (content.status) navItems.push(`<li><a href="#status-h">Status</a></li>`);
   if (content.demoLinks)
     navItems.push(`<li><a href="#live-h">Live</a></li>`);
   navItems.push(
@@ -707,6 +795,7 @@ ${eyebrowStrip}${topnav}  <header class="hero">
         ${demoCta}
         <a class="btn btn-ghost" href="${safeUrl(links.releasesUrl)}">Releases</a>
       </p>
+      ${statsStrip}
     </div>
   </header>
   <main>
@@ -745,7 +834,7 @@ ${pillarCards}
 ${profiles}
       </div>
     </section>
-${demoLinksSection ? demoLinksSection + "\n" : ""}    <section class="wrap" aria-labelledby="quickstart-h">
+${statusSection ? statusSection + "\n" : ""}${demoLinksSection ? demoLinksSection + "\n" : ""}    <section class="wrap" aria-labelledby="quickstart-h">
       <div class="section-head">
         <p class="eyebrow">Quickstart</p>
         <h2 id="quickstart-h" class="h-section">${esc(content.quickstart.caption)}</h2>
