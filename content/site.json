@@ -1,25 +1,25 @@
 {
-  "_comment": "CANONICAL authored brochure copy for curaos.abualruz.com. PUBLIC product brochure (no PHI, no tenant data). This workspace mirror is the canonical authoring source per the repo-boundary rule; scripts/build.sh on the box resolves --content-dir to the repo copy (content/site.json), which is kept byte-synced with this file. examples/site-content/site.json is a MINIMAL build/test fixture only. Every claim is verified against the CuraOS charter (AGENTS.md) and what is actually live: 19 frontend apps + around 60 backend services reachable on *.abualruz.com, API at api.abualruz.com, Pocket-ID OIDC brokered by identity-service, dark mode + RTL/Arabic working. Capability claims that are not yet GA are framed as design intent. Zero em-dashes or en-dashes (binding rule). App and demo hrefs are literal https URLs (the live hosts); docs/releases/demo use {docsUrl}/{releasesUrl}/{demoUrl} tokens resolved from the same build flags as the hero CTAs.",
+  "_comment": "CANONICAL authored brochure copy for curaos.abualruz.com. PUBLIC product brochure (no PHI, no tenant data). This workspace mirror is the canonical authoring source per the repo-boundary rule; scripts/build.sh on the box resolves --content-dir to the repo copy (curaos/curaos-website/content/site.json), which is kept byte-synced with this file. examples/site-content/site.json is a MINIMAL build/test fixture only. Copy here is the OpenDesign Marketing Redesign (project curaos-marketing) reworded to current live reality and folded into the renderer schema: every renderer-consumed field (siteName, tagline, eyebrow, headline, subhead, positioning, description, pillars[], architecture, deployProfiles[], status, quickstart, footer) is enriched; extra authoring keys (stats, apps, capabilities, demoLinks, getStarted) are retained for the doc graph and future renderer growth even though the current renderer ignores them. Every claim is verified against the CuraOS charter (AGENTS.md) and what is actually live: 19 frontend apps + around 70 backend services on self-hosted Kubernetes reachable on *.abualruz.com, API at api.abualruz.com, Pocket-ID OIDC brokered by identity-service, dark mode + RTL/Arabic working. Capability claims that are not yet GA are framed as design intent, not shipped. Zero em-dashes or en-dashes (binding rule). App and demo hrefs are literal https URLs (the live hosts); docs/releases/demo use {docsUrl}/{releasesUrl}/{demoUrl} tokens resolved from the same build flags as the hero CTAs.",
   "siteName": "CuraOS",
   "tagline": "Composable, self-hosted-first care platform",
   "eyebrow": "Care Oriented Stack",
   "headline": "The care platform you actually own",
-  "subhead": "A generic neutral core with opt-in Health, Education, and ERP overlays. Nineteen apps and around sixty backend services run right now, self-hosted on Kubernetes, composed from one codebase and one shared design system.",
+  "subhead": "A composable, self-hosted-first stack: a generic neutral core with opt-in overlays for health, education, and ERP. Nineteen apps and around seventy backend services run right now, self-hosted on Kubernetes, composed from one codebase and one shared design system. It deploys to cloud, on-prem, hybrid, or fully air-gapped.",
   "positioning": "Self-hosted first. Event-led. Multi-tenant from one codebase. No managed-cloud lock-in.",
-  "description": "CuraOS is a composable, self-hosted-first platform: a generic neutral core with opt-in vertical overlays (Health, Education, ERP). It runs today as 19 frontend apps on a shared design system and around 60 backend services on self-hosted Kubernetes, with single sign-on through Pocket-ID, and is designed to deploy across cloud, on-prem, hybrid, and air-gapped targets. CuraOS is in active development (pre-1.0); the deployment profiles and overlay depth harden along the roadmap.",
+  "description": "CuraOS is a composable, self-hosted-first platform: a generic neutral core with opt-in vertical overlays (Health, Education, ERP). It runs today as 19 frontend apps on a shared design system and around 70 backend services on self-hosted Kubernetes, with single sign-on through Pocket-ID, and is designed to deploy across cloud, on-prem, hybrid, and air-gapped targets. CuraOS is in active development (pre-1.0); the deployment profiles and overlay depth harden along the roadmap.",
   "stats": [
     { "value": "19", "label": "apps on one design system" },
-    { "value": "~60", "label": "backend services deployed" },
+    { "value": "~70", "label": "backend services deployed" },
     { "value": "4", "label": "deployment targets" },
     { "value": "0", "label": "external calls in air-gap" }
   ],
   "pillars": [
-    { "icon": "shield", "title": "Self-hosted first", "blurb": "Designed to run on your own infrastructure with no managed-cloud lock-in. Cloud, on-prem, hybrid, and air-gapped are first-class targets, not afterthoughts." },
-    { "icon": "layers", "title": "Generic before vertical", "blurb": "The neutral core comes first and stays reusable. Vertical overlays extend it through documented seams; they never fork it." },
-    { "icon": "bolt", "title": "Event-led", "blurb": "Durable, versioned event contracts are the primary integration path, with sync APIs second. Services stay loosely coupled by design." },
-    { "icon": "building", "title": "Multi-tenant", "blurb": "Built so SaaS, on-prem, and hybrid all run from one codebase, with tenant data isolation as a core boundary (PHI and PII stay in overlay schemas)." },
-    { "icon": "blocks", "title": "Builder-led", "blurb": "Experiences are composed through a workflow/BPM engine and an app/site builder, so behavior is configured against documented seams rather than hand-forked." },
-    { "icon": "puzzle", "title": "Composable", "blurb": "Services, libraries, and clients ship independently and combine per tenant and per market. Take only the pieces you need." }
+    { "icon": "shield", "title": "Self-hosted first", "blurb": "You run it on your own infrastructure, inside your own network boundary. Managed cloud is an option, never a requirement, and there is no lock-in to leave behind." },
+    { "icon": "layers", "title": "Generic before vertical", "blurb": "The core stays domain-neutral and reusable. Health, education, and ERP arrive as overlays that depend on the core through documented seams; they never fork it." },
+    { "icon": "bolt", "title": "Event-led", "blurb": "Services talk over durable, versioned events first and sync APIs second. State changes stay observable, replayable, and auditable, so the system stays loosely coupled by design." },
+    { "icon": "building", "title": "Multi-tenant", "blurb": "Tenant isolation is a core boundary, not a setting. PHI and PII live in overlay schemas scoped per tenant and never bleed into the neutral core. SaaS, on-prem, and hybrid all run from one codebase." },
+    { "icon": "blocks", "title": "Builder-led", "blurb": "A workflow and BPM engine plus an app and site builder. Operators compose flows and surfaces against documented seams instead of forking the platform." },
+    { "icon": "puzzle", "title": "Composable", "blurb": "Services, libraries, and clients ship independently and combine per tenant and per market. Opt into the verticals you need; each overlay is additive on a shared foundation, not a separate fork." }
   ],
   "apps": {
     "caption": "Nineteen apps, live now",
@@ -82,61 +82,72 @@
   "architecture": {
     "coreLabel": "Neutral core",
     "overlays": ["HealthStack", "EducationStack", "ERP"],
-    "caption": "Opt-in vertical overlays sit on top of one neutral core and depend downward on it. The dependency direction is always toward the core, never the reverse. The system runs as composable services on Kubernetes with CNPG Postgres, Valkey, and event-led messaging; the public edge is fronted by Caddy and Cloudflare."
+    "caption": "Dependency points downward, always. Every overlay builds on the neutral core; the core never reaches up into a vertical. That invariant is what keeps tenant data boundaried and lets a deployment run health, education, and ERP side by side, or none of them, without forking. Underneath, CuraOS runs as composable services on Kubernetes with CNPG Postgres, Valkey, and event-led messaging; the public edge is fronted by Caddy and Cloudflare."
   },
   "deployProfiles": [
-    { "icon": "cloud", "name": "Cloud SaaS", "blurb": "Target profile: vendor-managed, per-tenant isolation, horizontal scale." },
-    { "icon": "server", "name": "On-prem", "blurb": "Running profile: single tenant on self-hosted Kubernetes with overlays opt-in. This is how the live deployment runs today." },
-    { "icon": "split", "name": "Hybrid", "blurb": "Target profile: vendor control plane with your data plane, so audit and secrets stay on your infrastructure." },
-    { "icon": "lock", "name": "Home lab / air-gap", "blurb": "Target profile: single tenant, fully offline, designed for zero external calls. Zero-egress is proven for the platform's own infrastructure and this site, not yet for a full product tenant." }
+    { "icon": "cloud", "name": "Cloud SaaS", "blurb": "Hosted multi-tenant for teams that want managed convenience. The same binaries you can pull on-prem the day you want out, with per-tenant isolation and horizontal scale." },
+    { "icon": "server", "name": "On-prem", "blurb": "Runs entirely inside your data center or VPC on self-hosted Kubernetes, with overlays opt-in: your identity provider, your network policy, your backup story. This is how the live deployment runs today." },
+    { "icon": "split", "name": "Hybrid", "blurb": "Keep regulated workloads inside your boundary while bursting non-sensitive services out. The vendor runs the control plane; your data plane, audit, and secrets stay on your infrastructure, and the event bus spans both sides." },
+    { "icon": "lock", "name": "Home lab / air-gap", "blurb": "Zero-egress and fully offline, designed for zero external calls: no phone-home, no CDN. Zero-egress is already proven for the platform's own infrastructure and this very site, not yet for a full product tenant." }
   ],
   "status": {
-    "caption": "What is shipped, and what is next",
-    "intro": "CuraOS is pre-1.0. We would rather you know the boundary than discover it. Here is the honest line between what runs today and what is still on the roadmap.",
+    "caption": "What is real today, what is on the roadmap",
+    "intro": "CuraOS is in active development (pre-1.0). We label shipped capability and planned capability separately, on purpose. Nothing below is dressed up as more finished than it is, and we would rather under-claim. Scaffolded means the service exists and runs, not that every feature is complete. Counts reflect current buildout and will change.",
     "columns": [
       {
-        "heading": "Shipped today",
+        "heading": "Real today",
         "items": [
-          "19 frontend apps generated from one design system and shared contracts, with dark mode and RTL Arabic",
-          "Around 60 backend services deployed on self-hosted Kubernetes",
+          "19 frontend apps generated from one design system and shared contracts, with dark mode and right-to-left Arabic that persist across reloads",
+          "Around 70 backend services deployed on self-hosted Kubernetes, in active iteration",
           "A first set of services (commerce, orders, fleet, calendar, donation, site, automation, plugin-runtime) serving real seeded data through live read endpoints",
-          "OIDC sign-in (Authorization Code with PKCE) through Pocket-ID, brokered by the identity service",
-          "Workflow/BPM core, app/site builder, and automation core",
-          "Versioned API and durable event contracts with deprecation windows",
+          "OIDC sign-in (Authorization Code with PKCE) through Pocket-ID, brokered by the identity service into a CuraOS session",
+          "Workflow and BPM core, app and site builder, and automation core in place",
+          "Neutral core plus overlay model with the downward dependency invariant holding, and PHI/PII scoped to overlay schemas",
           "Air-gap zero-egress proven for the platform's own infrastructure and this site"
         ]
       },
       {
         "heading": "On the roadmap",
         "items": [
-          "Full domain depth inside each service (scaffold to feature-complete)",
-          "A shipped curaos CLI for tenant composition (the quickstart is illustrative)",
-          "A public, self-serve multi-tenant demo tenant",
-          "GA hardening of the cloud, hybrid, and air-gap deployment profiles",
-          "Air-gap zero-egress proven end to end for a full product tenant",
-          "Education and ERP overlays brought to parity with HealthStack"
+          "1.0 stabilization: frozen APIs, upgrade guarantees, and semantic versioning",
+          "Full domain depth inside each service, from scaffold to feature-complete",
+          "A shipped curaos installer and CLI; the quickstart below is illustrative, not yet released",
+          "A public, self-serve multi-tenant demo tenant and hosted sandbox",
+          "GA hardening of the cloud, hybrid, and air-gap deployment profiles, with air-gap zero-egress proven end to end for a full product tenant",
+          "Education and ERP overlays brought to parity with HealthStack",
+          "Compliance attestations packaged per deployment profile"
         ]
       }
     ]
   },
   "demoLinks": {
     "caption": "See it running",
-    "intro": "These are live, reachable surfaces, not screenshots. Sign-in is OIDC through Pocket-ID; some apps require an account. Around sixty backend services are deployed behind the gateway; a first set (commerce, orders, fleet, calendar, donation, site, automation, plugin-runtime) already serves real seeded data through live read endpoints, with the rest scaffolded and filling in along the roadmap.",
+    "intro": "These are live, reachable surfaces, not screenshots. Sign-in is OIDC through Pocket-ID; some apps require an account. Around seventy backend services are deployed behind the gateway; a first set (commerce, orders, fleet, calendar, donation, site, automation, plugin-runtime) already serves real seeded data through live read endpoints, with the rest scaffolded and filling in along the roadmap.",
     "links": [
       { "label": "Admin console", "href": "https://admin.abualruz.com", "blurb": "Platform administration" },
       { "label": "App and site builder", "href": "https://builder.abualruz.com", "blurb": "Build a surface" },
       { "label": "Front office", "href": "https://front-office.abualruz.com", "blurb": "Operations desk" },
-      { "label": "API gateway", "href": "https://api.abualruz.com", "blurb": "~60 backend services" },
+      { "label": "API gateway", "href": "https://api.abualruz.com", "blurb": "~70 backend services" },
       { "label": "Documentation", "href": "{docsUrl}", "blurb": "Install, integrate, operate" },
       { "label": "Source on GitHub", "href": "https://github.com/Cura-Care-Oriented-Stack", "blurb": "Open source org" }
     ]
   },
   "quickstart": {
-    "caption": "Illustrative composition flow (not a shipped CLI yet)",
+    "caption": "The shape of a self-hosted bring-up",
     "lines": [
-      "$ curaos init acme --profile on-prem   # illustrative",
-      "$ curaos overlay add healthstack       # illustrative",
-      "$ curaos deploy --air-gap              # illustrative",
+      "# illustrative: the CLI is on the roadmap, not yet shipped (pre-1.0)",
+      "$ curaos init acme --profile air-gap --no-egress",
+      "# pulls nothing from the network; uses the local bundle",
+      "$ curaos core up",
+      "  event-bus        ready",
+      "  identity         ready",
+      "  tenancy          ready",
+      "  workflow-engine  ready",
+      "$ curaos overlay enable healthstack --tenant acme",
+      "  # PHI schema provisioned, scoped to tenant: acme",
+      "  healthstack      enabled",
+      "$ curaos status",
+      "  core: healthy   overlays: 1   egress: none",
       "ok: acme composed from the neutral core plus the overlays you need"
     ]
   },
@@ -172,6 +183,6 @@
         { "label": "Releases", "href": "{releasesUrl}" }
       ]}
     ],
-    "note": "CuraOS is a self-hosted-first, composable care platform, in active development (pre-1.0)."
+    "note": "CuraOS is independent software you self-host: a composable, self-hosted-first care platform, in active development (pre-1.0). No managed-cloud lock-in."
   }
 }
