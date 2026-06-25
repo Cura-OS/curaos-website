@@ -148,9 +148,13 @@ describe("scripts/em-dash-gate.sh - fail-closed dash gate", () => {
       const binDir = join(sandbox, "bin");
       mkdirSync(binDir);
       const stub = join(binDir, "grep");
+      const realGrep = spawnSync("bash", ["-c", "command -p -v grep"], {
+        encoding: "utf8",
+      }).stdout.trim();
+      expect(realGrep).not.toBe("");
       writeFileSync(
         stub,
-        `#!/usr/bin/env bash\nfor a in "$@"; do case "$a" in -*P*) exit 2;; esac; done\nexec $(command -pv grep) "$@"\n`,
+        `#!/usr/bin/env bash\nfor a in "$@"; do case "$a" in -*P*) exit 2;; esac; done\nexec "${realGrep}" "$@"\n`,
       );
       spawnSync("chmod", ["+x", stub]);
       const env = { ...process.env, PATH: `${binDir}:${process.env.PATH ?? ""}` };

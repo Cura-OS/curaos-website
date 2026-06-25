@@ -25,7 +25,10 @@ info "index.html present"
 
 log "2 no remote ASSET references (CDN/font/script/style/img)"
 # Collect every HTML + CSS file in the built site.
-mapfile -t FILES < <(find "$SITE" \( -name '*.html' -o -name '*.css' \) -type f)
+FILES=()
+while IFS= read -r file; do
+  FILES+=("$file")
+done < <(find "$SITE" \( -name '*.html' -o -name '*.css' \) -type f)
 [[ ${#FILES[@]} -gt 0 ]] || die "no HTML/CSS files found under $SITE"
 
 fail=0
