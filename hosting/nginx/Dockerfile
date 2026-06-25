@@ -15,5 +15,6 @@ COPY site/ /usr/share/nginx/html/
 COPY hosting/nginx/default.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 8080
-# Run as the unprivileged nginx user (read-only static content).
-USER nginx
+# Run as the unprivileged nginx user by numeric UID so Kubernetes can verify
+# runAsNonRoot before container start.
+USER 101

@@ -30,11 +30,21 @@
         "heading": "Platform",
         "blurb": "Operate and build the system itself",
         "apps": [
-          { "name": "Admin", "blurb": "Tenant, identity, and platform administration console.", "href": "https://admin.abualruz.com" },
-          { "name": "Builder", "blurb": "Low-code app and site builder that generates surfaces from BPM and domain contracts.", "href": "https://builder.abualruz.com" },
-          { "name": "Front office", "blurb": "Staff-facing operations desk: tasks, scheduling, and day-to-day workflows.", "href": "https://front-office.abualruz.com" },
-          { "name": "Fleet", "blurb": "Vehicle and asset fleet tracking and dispatch.", "href": "https://fleet.abualruz.com" },
-          { "name": "Login", "blurb": "Shared OIDC sign-in surface (Authorization Code with PKCE via Pocket-ID).", "href": "https://login.abualruz.com" }
+          { "projectSlug": "admin-app", "name": "Admin", "blurb": "Tenant, identity, and platform administration console.", "href": "https://admin.abualruz.com" },
+          { "projectSlug": "workflow-designer", "name": "Builder", "blurb": "Low-code app and site builder that generates surfaces from BPM and domain contracts.", "href": "https://builder.abualruz.com" },
+          { "projectSlug": "front-office", "name": "Front office", "blurb": "Staff-facing operations desk: tasks, scheduling, and day-to-day workflows.", "href": "https://front-office.abualruz.com" },
+          { "projectSlug": "fleet-manager", "name": "Fleet", "blurb": "Vehicle and asset fleet tracking and dispatch.", "href": "https://fleet.abualruz.com" },
+          { "projectSlug": "hosted-login", "name": "Login", "blurb": "Shared OIDC sign-in surface (Authorization Code with PKCE via Pocket-ID).", "href": "https://login.abualruz.com" }
+        ]
+      },
+      {
+        "icon": "blocks",
+        "heading": "Cluster and mobile",
+        "blurb": "Tracked app projects without public vanity hosts",
+        "apps": [
+          { "projectSlug": "builder-studio", "name": "Builder Studio", "blurb": "Cluster web app for generated builder workflows and site publishing." },
+          { "projectSlug": "clinician-app", "name": "Clinician app", "blurb": "Expo mobile clinical workflow shell." },
+          { "projectSlug": "patient-app", "name": "Patient app", "blurb": "Expo mobile patient workflow shell." }
         ]
       },
       {
@@ -42,11 +52,11 @@
         "heading": "Business suite",
         "blurb": "Run an organization",
         "apps": [
-          { "name": "Business workflow", "blurb": "Design and run org-level BPM workflows and approvals.", "href": "https://biz-workflow.abualruz.com" },
-          { "name": "Business automation", "blurb": "Low-code automation: connectors, actions, and scheduling.", "href": "https://biz-automation.abualruz.com" },
-          { "name": "Business site", "blurb": "Build and publish public-facing organization sites.", "href": "https://biz-site.abualruz.com" },
-          { "name": "Business shop", "blurb": "Commerce and storefront for an organization.", "href": "https://biz-shop.abualruz.com" },
-          { "name": "Business donation", "blurb": "Donation campaigns and fundraising for an organization.", "href": "https://biz-donation.abualruz.com" }
+          { "projectSlug": "business-workflow", "name": "Business workflow", "blurb": "Design and run org-level BPM workflows and approvals.", "href": "https://biz-workflow.abualruz.com" },
+          { "projectSlug": "business-automation", "name": "Business automation", "blurb": "Low-code automation: connectors, actions, and scheduling.", "href": "https://biz-automation.abualruz.com" },
+          { "projectSlug": "business-site", "name": "Business site", "blurb": "Build and publish public-facing organization sites.", "href": "https://biz-site.abualruz.com" },
+          { "projectSlug": "business-shop", "name": "Business shop", "blurb": "Commerce and storefront for an organization.", "href": "https://biz-shop.abualruz.com" },
+          { "projectSlug": "business-donation", "name": "Business donation", "blurb": "Donation campaigns and fundraising for an organization.", "href": "https://biz-donation.abualruz.com" }
         ]
       },
       {
@@ -54,15 +64,15 @@
         "heading": "Personal suite",
         "blurb": "For an individual",
         "apps": [
-          { "name": "My workflow", "blurb": "Personal workflows and task pipelines.", "href": "https://my-workflow.abualruz.com" },
-          { "name": "My automation", "blurb": "Personal low-code automations and connectors.", "href": "https://my-automation.abualruz.com" },
-          { "name": "My tasks", "blurb": "Personal task and to-do management.", "href": "https://my-tasks.abualruz.com" },
-          { "name": "My calendar", "blurb": "Personal calendar and scheduling.", "href": "https://my-calendar.abualruz.com" },
-          { "name": "My notes", "blurb": "Personal notes and documents.", "href": "https://my-notes.abualruz.com" },
-          { "name": "My tracking", "blurb": "Personal location and asset tracking.", "href": "https://my-tracking.abualruz.com" },
-          { "name": "My site", "blurb": "Build and publish a personal site.", "href": "https://my-site.abualruz.com" },
-          { "name": "My shop", "blurb": "Personal storefront and commerce.", "href": "https://my-shop.abualruz.com" },
-          { "name": "My donation", "blurb": "Personal donation and fundraising pages.", "href": "https://my-donation.abualruz.com" }
+          { "projectSlug": "personal-workflow", "name": "My workflow", "blurb": "Personal workflows and task pipelines.", "href": "https://my-workflow.abualruz.com" },
+          { "projectSlug": "personal-automation", "name": "My automation", "blurb": "Personal low-code automations and connectors.", "href": "https://my-automation.abualruz.com" },
+          { "projectSlug": "personal-tasks", "name": "My tasks", "blurb": "Personal task and to-do management.", "href": "https://my-tasks.abualruz.com" },
+          { "projectSlug": "personal-calendar", "name": "My calendar", "blurb": "Personal calendar and scheduling.", "href": "https://my-calendar.abualruz.com" },
+          { "projectSlug": "personal-notes", "name": "My notes", "blurb": "Personal notes and documents.", "href": "https://my-notes.abualruz.com" },
+          { "projectSlug": "personal-tracking", "name": "My tracking", "blurb": "Personal location and asset tracking.", "href": "https://my-tracking.abualruz.com" },
+          { "projectSlug": "personal-site", "name": "My site", "blurb": "Build and publish a personal site.", "href": "https://my-site.abualruz.com" },
+          { "projectSlug": "personal-shop", "name": "My shop", "blurb": "Personal storefront and commerce.", "href": "https://my-shop.abualruz.com" },
+          { "projectSlug": "personal-donation", "name": "My donation", "blurb": "Personal donation and fundraising pages.", "href": "https://my-donation.abualruz.com" }
         ]
       }
     ]
