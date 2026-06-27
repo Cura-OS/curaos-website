@@ -124,7 +124,7 @@ export function grainSvg(): string {
 export function pillarMotif(key: string | undefined): string {
   const open =
     '<svg class="motif" viewBox="0 0 320 96" role="img" aria-hidden="true" preserveAspectRatio="xMidYMid slice">';
-  const close = "</svg>";
+  const close = '</svg>';
   const M: Record<string, string> = {
     // Self-hosted: a server stack guarded by a shield arc.
     shield:
@@ -133,8 +133,7 @@ export function pillarMotif(key: string | undefined): string {
     layers:
       '<g stroke="var(--accent)" stroke-width="1.8" fill="none"><path d="M160 26 l44 16 -44 16 -44-16 z" fill="var(--accent-quiet)"/><path d="M116 50 l44 16 44-16"/><path d="M116 62 l44 16 44-16"/></g>',
     // Event-led: a pulse line crossing event dots.
-    bolt:
-      '<path d="M24 56 h60 l10-22 14 44 12-30 10 16 h140" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="84" cy="56" r="4" fill="var(--overlay-hue)"/><circle cx="146" cy="58" r="4" fill="var(--overlay-hue)"/><circle cx="234" cy="56" r="4" fill="var(--accent)"/>',
+    bolt: '<path d="M24 56 h60 l10-22 14 44 12-30 10 16 h140" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="84" cy="56" r="4" fill="var(--overlay-hue)"/><circle cx="146" cy="58" r="4" fill="var(--overlay-hue)"/><circle cx="234" cy="56" r="4" fill="var(--accent)"/>',
     // Multi-tenant: isolated tenant cells sharing one base bar.
     building:
       '<g fill="var(--surface)" stroke="var(--accent)" stroke-width="1.6"><rect x="60" y="20" width="40" height="44" rx="4"/><rect x="140" y="20" width="40" height="44" rx="4"/><rect x="220" y="20" width="40" height="44" rx="4"/></g><rect x="48" y="70" width="224" height="14" rx="6" fill="var(--accent-quiet)" stroke="var(--accent)" stroke-width="1.6"/>',
@@ -147,7 +146,7 @@ export function pillarMotif(key: string | undefined): string {
   };
   const fallback =
     '<g stroke="var(--accent)" stroke-width="1.6" fill="none"><circle cx="80" cy="48" r="12" fill="var(--accent-quiet)"/><circle cx="160" cy="28" r="9" fill="var(--accent-quiet)"/><circle cx="160" cy="68" r="9" fill="var(--accent-quiet)"/><circle cx="240" cy="48" r="12" fill="var(--accent-quiet)"/><path d="M92 48 H148M168 34 L232 46M168 62 L232 50"/></g>';
-  return open + (M[key ?? ""] ?? fallback) + close;
+  return open + (M[key ?? ''] ?? fallback) + close;
 }
 
 /**
@@ -212,7 +211,7 @@ export function architectureSvg(
         `<text x="${midX.toFixed(1)}" y="${(ovY + ovH / 2 + 5).toFixed(1)}" text-anchor="middle" font-size="15" font-weight="700" font-family="${SVG_FONT}" fill="var(--overlay-hue)">${label}</text></g>`
       );
     })
-    .join("");
+    .join('');
 
   const layerLabel = (x: number, y: number, anchor: string, t: string) =>
     `<text x="${x}" y="${y}" text-anchor="${anchor}" font-size="11.5" font-weight="600" letter-spacing="0.1em" font-family="${SVG_FONT}" fill="currentColor" opacity=".7">${t}</text>`;
@@ -223,9 +222,9 @@ export function architectureSvg(
     `<defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">` +
     `<path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>` +
     `<style>@media (prefers-reduced-motion: reduce){.dep-pulse{display:none}}</style>` +
-    layerLabel(startX, ovY - 14, "start", "VERTICAL OVERLAYS (OPT-IN)") +
+    layerLabel(startX, ovY - 14, 'start', 'VERTICAL OVERLAYS (OPT-IN)') +
     tiles +
-    layerLabel(coreX, coreY - 14, "start", "FOUNDATION") +
+    layerLabel(coreX, coreY - 14, 'start', 'FOUNDATION') +
     `<g><rect x="${coreX}" y="${coreY}" width="${coreW}" height="${coreH}" rx="13" fill="var(--accent-quiet)" stroke="var(--accent)" stroke-width="2.2"/>` +
     `<text x="${(coreX + coreW / 2).toFixed(1)}" y="${(coreMidY + 6).toFixed(1)}" text-anchor="middle" font-size="19" font-weight="700" font-family="${SVG_FONT}" fill="var(--accent)">${coreLabel(coreLabelEsc)}</text></g>` +
     `</svg>`

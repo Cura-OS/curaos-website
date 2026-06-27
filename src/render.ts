@@ -18,17 +18,14 @@
 // committed identity (indigo + copper "atlas" default; off the slate/blue and
 // teal-healthcare anti-references) and the design-law rationale.
 
-import {
-  buildStyle,
-  resolveVariant,
-} from "./design-tokens.ts";
+import { buildStyle, resolveVariant } from './design-tokens.ts';
 import {
   architectureSvg,
   BRAND_MARK,
   grainSvg,
   heroProductFrameSvg,
   pillarMotif,
-} from "./illustrations.ts";
+} from './illustrations.ts';
 
 export interface Pillar {
   readonly icon: string;
@@ -188,7 +185,7 @@ export interface RenderOptions {
   /** BCP-47 language tag for <html lang>. */
   readonly lang: string;
   /** Text direction for <html dir>. Enables the i18n/RTL seam (NFR §6). */
-  readonly dir: "ltr" | "rtl";
+  readonly dir: 'ltr' | 'rtl';
   /**
    * Theme/persona variant key into design-tokens THEME_VARIANTS. Optional;
    * falls back to the default ("atlas"). Supplying a different key (e.g.
@@ -204,10 +201,8 @@ export interface RenderOptions {
 // so esc() is deliberately NOT applied to them; every authored text field below
 // stays escaped via esc(), and every href via safeUrl().
 const ICONS: Record<string, string> = {
-  shield:
-    '<path d="M12 3l7 3v5c0 4.4-3 7.6-7 10-4-2.4-7-5.6-7-10V6l7-3z"/>',
-  layers:
-    '<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 12l9 5 9-5"/><path d="M3 16l9 5 9-5"/>',
+  shield: '<path d="M12 3l7 3v5c0 4.4-3 7.6-7 10-4-2.4-7-5.6-7-10V6l7-3z"/>',
+  layers: '<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 12l9 5 9-5"/><path d="M3 16l9 5 9-5"/>',
   bolt: '<path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/>',
   building:
     '<path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16"/><path d="M15 9h4a1 1 0 0 1 1 1v11"/><path d="M2 21h20"/><path d="M8 8h2M8 12h2M8 16h2"/>',
@@ -215,30 +210,22 @@ const ICONS: Record<string, string> = {
     '<path d="M3 3h7v7H3z"/><path d="M14 3h7v7h-7z"/><path d="M14 14h7v7h-7z"/><path d="M3 14h7v7H3z"/>',
   puzzle:
     '<path d="M10 3h4a1 1 0 0 1 1 1v2a2 2 0 1 0 4 0V4h2a1 1 0 0 1 1 1v4h-2a2 2 0 1 0 0 4h2v4a1 1 0 0 1-1 1h-4v-2a2 2 0 1 0-4 0v2H4a1 1 0 0 1-1-1v-4h2a2 2 0 1 0 0-4H3V4a1 1 0 0 1 1-1h6z"/>',
-  cloud:
-    '<path d="M17.5 19a4.5 4.5 0 0 0 .5-8.97A6 6 0 0 0 6.2 9.3 4 4 0 0 0 6.5 19h11z"/>',
+  cloud: '<path d="M17.5 19a4.5 4.5 0 0 0 .5-8.97A6 6 0 0 0 6.2 9.3 4 4 0 0 0 6.5 19h11z"/>',
   server:
     '<path d="M4 4h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path d="M4 14h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1z"/><path d="M7 7h.01M7 17h.01"/>',
   split:
     '<path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M21 3l-7 7"/><path d="M3 3l7 7"/><path d="M12 14v7"/><path d="M12 10v4"/>',
-  lock:
-    '<path d="M6 11h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1z"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
-  workflow:
-    '<path d="M3 6h6v6H3z"/><path d="M15 12h6v6h-6z"/><path d="M9 9h3a3 3 0 0 1 3 3v3"/>',
+  lock: '<path d="M6 11h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1z"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  workflow: '<path d="M3 6h6v6H3z"/><path d="M15 12h6v6h-6z"/><path d="M9 9h3a3 3 0 0 1 3 3v3"/>',
   wrench:
     '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2-2 2.6-2.6z"/>',
-  gauge:
-    '<path d="M12 14l4-4"/><path d="M5.6 18a8 8 0 1 1 12.8 0"/><path d="M12 14h.01"/>',
-  user:
-    '<path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M5 21a7 7 0 0 1 14 0"/>',
+  gauge: '<path d="M12 14l4-4"/><path d="M5.6 18a8 8 0 1 1 12.8 0"/><path d="M12 14h.01"/>',
+  user: '<path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M5 21a7 7 0 0 1 14 0"/>',
   briefcase:
     '<path d="M4 8h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/>',
-  grid:
-    '<path d="M3 3h7v7H3z"/><path d="M14 3h7v7h-7z"/><path d="M14 14h7v7h-7z"/><path d="M3 14h7v7H3z"/>',
-  link:
-    '<path d="M10 14a3.5 3.5 0 0 0 5 0l3-3a3.5 3.5 0 0 0-5-5l-1.5 1.5"/><path d="M14 10a3.5 3.5 0 0 0-5 0l-3 3a3.5 3.5 0 0 0 5 5l1.5-1.5"/>',
-  key:
-    '<path d="M15 7a4 4 0 1 0-3.9 5L7 16v3h3v-2h2v-2h1.1A4 4 0 0 0 15 7z"/>',
+  grid: '<path d="M3 3h7v7H3z"/><path d="M14 3h7v7h-7z"/><path d="M14 14h7v7h-7z"/><path d="M3 14h7v7H3z"/>',
+  link: '<path d="M10 14a3.5 3.5 0 0 0 5 0l3-3a3.5 3.5 0 0 0-5-5l-1.5 1.5"/><path d="M14 10a3.5 3.5 0 0 0-5 0l-3 3a3.5 3.5 0 0 0 5 5l1.5-1.5"/>',
+  key: '<path d="M15 7a4 4 0 1 0-3.9 5L7 16v3h3v-2h2v-2h1.1A4 4 0 0 0 15 7z"/>',
   network:
     '<path d="M12 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/><path d="M5 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M12 9v3M6.5 15l4-3M17.5 15l-4-3"/>',
 };
@@ -250,10 +237,10 @@ function icon(key: string | undefined): string {
 
 function esc(s: string): string {
   return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 /** Escape a URL for an href attribute, rejecting non-http(s) schemes. */
@@ -265,11 +252,7 @@ function safeUrl(u: string): string {
   return esc(trimmed);
 }
 
-export function renderPage(
-  content: SiteContent,
-  links: LinkTargets,
-  opts: RenderOptions,
-): string {
+export function renderPage(content: SiteContent, links: LinkTargets, opts: RenderOptions): string {
   // Resolve the theme/persona variant and emit its stylesheet from the shared,
   // parameterized design source. This is the generator seam: a different variant
   // key produces a distinct, correct page from this exact code path.
@@ -302,9 +285,9 @@ export function renderPage(
   const pillarCards = content.pillars
     .map(
       (p) =>
-        `      <article class="card">${pillarMotif(p.icon)}<div class="card-body">${icon(p.icon)}<h3>${esc(p.title)}</h3>${p.blurb ? `<p>${esc(p.blurb)}</p>` : ""}</div></article>`,
+        `      <article class="card">${pillarMotif(p.icon)}<div class="card-body">${icon(p.icon)}<h3>${esc(p.title)}</h3>${p.blurb ? `<p>${esc(p.blurb)}</p>` : ''}</div></article>`,
     )
-    .join("\n");
+    .join('\n');
 
   // Deploy-profile cards use the FLAT card variant (icon chip + body, different
   // spacing rhythm) so the deploy grid reads visually distinct from the pillar
@@ -314,11 +297,11 @@ export function renderPage(
       (p) =>
         `      <article class="card"><span class="chip">${icon(p.icon)}</span><div class="card-body"><h3>${esc(p.name)}</h3><p>${esc(p.blurb)}</p></div></article>`,
     )
-    .join("\n");
+    .join('\n');
 
   const inlineLabels = content.deployProfiles
     .map((p) => `        <li>${esc(p.name)}</li>`)
-    .join("\n");
+    .join('\n');
 
   // Render the terminal body line by line. A leading "$ " is the shell prompt;
   // wrap just the "$" in a span so it can carry the one permitted accent texture
@@ -327,25 +310,20 @@ export function renderPage(
     lines
       .map((l) => {
         const e = esc(l);
-        return e.startsWith("$ ")
-          ? `<span class="prompt">$</span>${e.slice(1)}`
-          : e;
+        return e.startsWith('$ ') ? `<span class="prompt">$</span>${e.slice(1)}` : e;
       })
-      .join("\n");
+      .join('\n');
 
   const quickstartBody = renderTerminal(content.quickstart.lines);
 
   const footerCols = content.footer.columns
     .map((col) => {
       const items = col.links
-        .map(
-          (l) =>
-            `          <li><a href="${resolveHref(l.href)}">${esc(l.label)}</a></li>`,
-        )
-        .join("\n");
+        .map((l) => `          <li><a href="${resolveHref(l.href)}">${esc(l.label)}</a></li>`)
+        .join('\n');
       return `      <div>\n        <h2>${esc(col.heading)}</h2>\n        <ul>\n${items}\n        </ul>\n      </div>`;
     })
-    .join("\n");
+    .join('\n');
 
   // The demo CTA is NAVIGATION only once the demo tenant is live (S7 #516).
   // Until then it is rendered as a NON-navigational, non-clickable affordance:
@@ -358,7 +336,7 @@ export function renderPage(
 
   const eyebrowStrip = content.eyebrow
     ? `  <div class="eyebrow-strip"><p class="eyebrow">${esc(content.eyebrow)}</p></div>\n`
-    : "";
+    : '';
 
   // -- Optional sections (rendered only when authored). ---------------------
 
@@ -366,8 +344,8 @@ export function renderPage(
   // anchor card linking to the live surface; one without is a plain card.
   const appsSection = content.apps
     ? (() => {
-        const groups = content.apps!.groups
-          .map((g) => {
+        const groups = content
+          .apps!.groups.map((g) => {
             const cards = g.apps
               .map((a) => {
                 const inner =
@@ -375,21 +353,19 @@ export function renderPage(
                   `<p>${esc(a.blurb)}</p>`;
                 if (a.href) {
                   const href = resolveHref(a.href);
-                  let host = "";
+                  let host = '';
                   try {
                     host = new URL(href).host;
                   } catch {
-                    host = "";
+                    host = '';
                   }
-                  const hostLine = host
-                    ? `<span class="app-host">${esc(host)}</span>`
-                    : "";
+                  const hostLine = host ? `<span class="app-host">${esc(host)}</span>` : '';
                   return `        <a class="app-card" href="${href}">${inner}${hostLine}</a>`;
                 }
                 return `        <div class="app-card">${inner}</div>`;
               })
-              .join("\n");
-            const gb = g.blurb ? `<span class="gb">${esc(g.blurb)}</span>` : "";
+              .join('\n');
+            const gb = g.blurb ? `<span class="gb">${esc(g.blurb)}</span>` : '';
             return (
               `    <div class="app-group reveal">\n` +
               `      <div class="app-group-head">${icon(g.icon)}<h3>${esc(g.heading)}</h3>${gb}</div>\n` +
@@ -397,10 +373,10 @@ export function renderPage(
               `    </div>`
             );
           })
-          .join("\n");
+          .join('\n');
         const intro = content.apps!.intro
           ? `        <p class="lead">${esc(content.apps!.intro)}</p>\n`
-          : "";
+          : '';
         return `    <section class="wrap" aria-labelledby="apps-h">
       <div class="section-head">
         <p class="eyebrow">Product</p>
@@ -409,20 +385,20 @@ ${intro}      </div>
 ${groups}
     </section>`;
       })()
-    : "";
+    : '';
 
   // Capabilities: the platform building blocks. FLAT card variant.
   const capabilitiesSection = content.capabilities
     ? (() => {
-        const cards = content.capabilities!.items
-          .map(
+        const cards = content
+          .capabilities!.items.map(
             (c) =>
               `      <article class="card"><span class="chip">${icon(c.icon)}</span><div class="card-body"><h3>${esc(c.title)}</h3><p>${esc(c.blurb)}</p></div></article>`,
           )
-          .join("\n");
+          .join('\n');
         const intro = content.capabilities!.intro
           ? `        <p class="lead">${esc(content.capabilities!.intro)}</p>\n`
-          : "";
+          : '';
         return `    <section class="wrap" aria-labelledby="cap-h">
       <div class="section-head">
         <p class="eyebrow">Capabilities</p>
@@ -433,29 +409,27 @@ ${cards}
       </div>
     </section>`;
       })()
-    : "";
+    : '';
 
   // Live surfaces: a list of real, reachable URLs (apps, API, docs).
   const demoLinksSection = content.demoLinks
     ? (() => {
-        const rows = content.demoLinks!.links
-          .map((l) => {
+        const rows = content
+          .demoLinks!.links.map((l) => {
             const href = resolveHref(l.href);
-            let host = "";
+            let host = '';
             try {
               host = new URL(href).host;
             } catch {
               host = href;
             }
-            const blurb = l.blurb
-              ? `<span class="lb">${esc(l.blurb)}</span>`
-              : "";
+            const blurb = l.blurb ? `<span class="lb">${esc(l.blurb)}</span>` : '';
             return `        <li><a class="linkrow" href="${href}"><span class="ll">${esc(l.label)}</span><span class="lu">${esc(host)}</span>${blurb}</a></li>`;
           })
-          .join("\n");
+          .join('\n');
         const intro = content.demoLinks!.intro
           ? `        <p class="lead">${esc(content.demoLinks!.intro)}</p>\n`
-          : "";
+          : '';
         return `    <section class="wrap" aria-labelledby="live-h">
       <div class="section-head">
         <p class="eyebrow">Live now</p>
@@ -466,7 +440,7 @@ ${rows}
       </ul>
     </section>`;
       })()
-    : "";
+    : '';
 
   // Self-host get-started: copy + a terminal block.
   const getStartedSection = content.getStarted
@@ -490,7 +464,7 @@ ${rows}
       </div></div>
     </section>`;
       })()
-    : "";
+    : '';
 
   // Hero stat strip: live, verifiable counts. Rendered inside the hero when authored.
   const statsStrip = content.stats?.length
@@ -500,9 +474,9 @@ ${rows}
           (s) =>
             `        <li><span class="n">${esc(s.value)}</span><span class="l">${esc(s.label)}</span></li>`,
         )
-        .join("\n") +
+        .join('\n') +
       `\n      </ul>`
-    : "";
+    : '';
 
   // Shipped-vs-roadmap honesty grid. The first column reads as shipped, the rest
   // as roadmap; a single check / clock icon per item. This is the credibility
@@ -513,24 +487,24 @@ ${rows}
     '<svg class="si" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
   const statusSection = content.status?.columns.length
     ? (() => {
-        const cols = content.status!.columns
-          .map((col, i) => {
+        const cols = content
+          .status!.columns.map((col, i) => {
             const shipped = i === 0;
             const ic = shipped ? CHECK : CLOCK;
             const items = col.items
               .map((t) => `          <li>${ic}<span>${esc(t)}</span></li>`)
-              .join("\n");
+              .join('\n');
             return (
-              `      <div class="status-col ${shipped ? "is-shipped" : "is-road"}">\n` +
+              `      <div class="status-col ${shipped ? 'is-shipped' : 'is-road'}">\n` +
               `        <h3><span class="dot" aria-hidden="true"></span>${esc(col.heading)}</h3>\n` +
               `        <ul>\n${items}\n        </ul>\n` +
               `      </div>`
             );
           })
-          .join("\n");
+          .join('\n');
         const intro = content.status!.intro
           ? `        <p class="lead">${esc(content.status!.intro)}</p>\n`
-          : "";
+          : '';
         return `    <section class="wrap" aria-labelledby="status-h">
       <div class="section-head">
         <p class="eyebrow">Pre-1.0 / active buildout</p>
@@ -541,26 +515,22 @@ ${cols}
       </div>
     </section>`;
       })()
-    : "";
+    : '';
 
   // Top nav: brand + section anchors + the docs CTA.
   const navItems: string[] = [];
   if (content.apps) navItems.push(`<li><a href="#apps-h">Apps</a></li>`);
-  if (content.capabilities)
-    navItems.push(`<li><a href="#cap-h">Capabilities</a></li>`);
+  if (content.capabilities) navItems.push(`<li><a href="#cap-h">Capabilities</a></li>`);
   navItems.push(`<li><a href="#arch-h">Architecture</a></li>`);
   navItems.push(`<li><a href="#deploy-h">Deploy</a></li>`);
   if (content.status) navItems.push(`<li><a href="#status-h">Status</a></li>`);
-  if (content.demoLinks)
-    navItems.push(`<li><a href="#live-h">Live</a></li>`);
-  navItems.push(
-    `<li><a class="nav-cta" href="${safeUrl(links.docsUrl)}">Docs</a></li>`,
-  );
+  if (content.demoLinks) navItems.push(`<li><a href="#live-h">Live</a></li>`);
+  navItems.push(`<li><a class="nav-cta" href="${safeUrl(links.docsUrl)}">Docs</a></li>`);
   const topnav = `  <nav class="topnav" aria-label="Primary">
     <div class="wrap">
       <a class="brand" href="#top">${BRAND_MARK}${esc(content.siteName)}</a>
       <ul class="navlinks">
-${navItems.map((i) => `        ${i}`).join("\n")}
+${navItems.map((i) => `        ${i}`).join('\n')}
       </ul>
     </div>
   </nav>
@@ -622,7 +592,7 @@ ${inlineLabels}
         </div>
       </div>
     </section>
-${appsSection ? appsSection + "\n" : ""}${capabilitiesSection ? capabilitiesSection + "\n" : ""}    <section class="wrap" aria-labelledby="pillars-h">
+${appsSection ? appsSection + '\n' : ''}${capabilitiesSection ? capabilitiesSection + '\n' : ''}    <section class="wrap" aria-labelledby="pillars-h">
       <div class="section-head">
         <p class="eyebrow">Charter</p>
         <h2 id="pillars-h" class="h-section">Principles, not features</h2>
@@ -652,7 +622,7 @@ ${pillarCards}
 ${profiles}
       </div>
     </section>
-${statusSection ? statusSection + "\n" : ""}${demoLinksSection ? demoLinksSection + "\n" : ""}    <section class="wrap" aria-labelledby="quickstart-h">
+${statusSection ? statusSection + '\n' : ''}${demoLinksSection ? demoLinksSection + '\n' : ''}    <section class="wrap" aria-labelledby="quickstart-h">
       <div class="section-head">
         <p class="eyebrow">Quickstart</p>
         <h2 id="quickstart-h" class="h-section">${esc(content.quickstart.caption)}</h2>
@@ -662,7 +632,7 @@ ${statusSection ? statusSection + "\n" : ""}${demoLinksSection ? demoLinksSectio
         <pre><code>${quickstartBody}</code></pre>
       </div></div>
     </section>
-${getStartedSection ? getStartedSection + "\n" : ""}  </main>
+${getStartedSection ? getStartedSection + '\n' : ''}  </main>
   <footer class="site-footer">
     <nav class="footer-cols wrap" aria-label="Footer">
 ${footerCols}

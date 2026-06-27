@@ -28,7 +28,7 @@
 //     no identical icon-heading-text card grids (pillars carry distinct SVG
 //     motifs), no hero-metric template as the only hero idea.
 
-import { DISPLAY_FONT_DATA_URI, DISPLAY_FONT_FAMILY } from "./font-display.ts";
+import { DISPLAY_FONT_DATA_URI, DISPLAY_FONT_FAMILY } from './font-display.ts';
 
 /** A two-stop HSL gradient pair plus the solid mid tone, per theme color role. */
 export interface Ramp {
@@ -70,8 +70,8 @@ export const THEME_VARIANTS: Readonly<Record<string, ThemeVariant>> = {
   // Default marketing identity: indigo/violet primary + copper secondary, warm
   // graphite neutrals. Engineered, owned, distinctly NOT healthcare teal.
   atlas: {
-    key: "atlas",
-    label: "Atlas (indigo + copper)",
+    key: 'atlas',
+    label: 'Atlas (indigo + copper)',
     primary: {
       light: { tint: hsl(256, 92, 97), base: hsl(256, 78, 56), deep: hsl(258, 74, 44) },
       dark: { tint: hsl(256, 46, 16), base: hsl(255, 92, 76), deep: hsl(252, 96, 84) },
@@ -88,8 +88,8 @@ export const THEME_VARIANTS: Readonly<Record<string, ThemeVariant>> = {
   // Alternate persona: near-monochrome warm ink with a single electric-lime
   // signal. Proves the generator emits a genuinely different look from one path.
   graphite: {
-    key: "graphite",
-    label: "Graphite (ink + lime signal)",
+    key: 'graphite',
+    label: 'Graphite (ink + lime signal)',
     primary: {
       light: { tint: hsl(80, 70, 95), base: hsl(96, 64, 36), deep: hsl(100, 70, 28) },
       dark: { tint: hsl(96, 30, 14), base: hsl(86, 84, 62), deep: hsl(82, 90, 70) },
@@ -105,7 +105,7 @@ export const THEME_VARIANTS: Readonly<Record<string, ThemeVariant>> = {
   },
 };
 
-export const DEFAULT_VARIANT = "atlas";
+export const DEFAULT_VARIANT = 'atlas';
 
 /** Resolve a variant key to its config, falling back to the default. */
 export function resolveVariant(key: string | undefined): ThemeVariant {
@@ -117,9 +117,18 @@ export function resolveVariant(key: string | undefined): ThemeVariant {
 // pure #000/#fff, per the design laws). l[] are the lightness stops 0..950.
 function neutralRamp(hue: number, sat: number): Record<string, string> {
   const steps: ReadonlyArray<readonly [string, number]> = [
-    ["0", 99], ["50", 97], ["100", 94.5], ["200", 90], ["300", 82],
-    ["400", 64], ["500", 48], ["600", 38], ["700", 28], ["800", 18],
-    ["900", 12], ["950", 8],
+    ['0', 99],
+    ['50', 97],
+    ['100', 94.5],
+    ['200', 90],
+    ['300', 82],
+    ['400', 64],
+    ['500', 48],
+    ['600', 38],
+    ['700', 28],
+    ['800', 18],
+    ['900', 12],
+    ['950', 8],
   ];
   const out: Record<string, string> = {};
   for (const [k, l] of steps) out[k] = hsl(hue, sat, l);
@@ -148,21 +157,21 @@ export function buildStyle(variant: ThemeVariant): string {
 :root{
   color-scheme:light dark;
   /* Warm graphite neutral ramp (tinted toward the brand hue family). */
-  --bg:${ld(n["50"]!, n["950"]!)};
-  --bg-elev:${ld(n["100"]!, n["900"]!)};
-  --surface:${ld(n["0"]!, n["900"]!)};
-  --surface-raised:${ld(n["0"]!, n["800"]!)};
-  --fg:${ld(n["900"]!, n["50"]!)};
-  --fg-muted:${ld(n["600"]!, n["400"]!)};
-  --fg-subtle:${ld(n["500"]!, n["500"]!)};
-  --border:${ld(n["200"]!, n["800"]!)};
-  --border-strong:${ld(n["300"]!, n["700"]!)};
+  --bg:${ld(n['50']!, n['950']!)};
+  --bg-elev:${ld(n['100']!, n['900']!)};
+  --surface:${ld(n['0']!, n['900']!)};
+  --surface-raised:${ld(n['0']!, n['800']!)};
+  --fg:${ld(n['900']!, n['50']!)};
+  --fg-muted:${ld(n['600']!, n['400']!)};
+  --fg-subtle:${ld(n['500']!, n['500']!)};
+  --border:${ld(n['200']!, n['800']!)};
+  --border-strong:${ld(n['300']!, n['700']!)};
   /* Primary brand voice. */
   --accent:${ld(v.primary.light.base, v.primary.dark.base)};
   --accent-hover:${ld(v.primary.light.deep, v.primary.dark.deep)};
   --accent-quiet:${ld(v.primary.light.tint, v.primary.dark.tint)};
   --accent-fg:${ld(v.primary.light.deep, v.primary.dark.deep)};
-  --on-accent:${ld(n["0"]!, n["950"]!)};
+  --on-accent:${ld(n['0']!, n['950']!)};
   /* Secondary signal (overlay nodes, warmth, motion highlight). */
   --overlay-hue:${ld(v.secondary.light.base, v.secondary.dark.base)};
   --overlay-deep:${ld(v.secondary.light.deep, v.secondary.dark.deep)};
@@ -225,18 +234,18 @@ main section + section{border-top:1px solid var(--border)}
   radial-gradient(46rem 38rem at 70% 96%, var(--mesh-c), transparent 62%),
   linear-gradient(180deg,var(--bg-elev),var(--bg) 72%);
   filter:saturate(1.05)}
-.hero-grain{position:absolute;inset:0;z-index:-1;opacity:${ld("0.5", "0.32")};mix-blend-mode:${ld("multiply", "overlay")};pointer-events:none}
+.hero-grain{position:absolute;inset:0;z-index:-1;opacity:${ld('0.5', '0.32')};mix-blend-mode:${ld('multiply', 'overlay')};pointer-events:none}
 .hero-grain svg{width:100%;height:100%}
 .hero-grid{display:grid;gap:clamp(2rem,5vw,4rem);grid-template-columns:1fr;align-items:center}
 @media (min-width:62rem){.hero-grid{grid-template-columns:1.05fr .95fr}}
 .hero .h-display{max-width:16ch}
 .hero-visual{position:relative}
-.hero-visual svg{width:100%;height:auto;display:block;filter:drop-shadow(0 24px 48px hsl(${v.neutralHue} 40% 12% / ${ld("0.18", "0.6")}))}
+.hero-visual svg{width:100%;height:auto;display:block;filter:drop-shadow(0 24px 48px hsl(${v.neutralHue} 40% 12% / ${ld('0.18', '0.6')}))}
 .cta-row{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:2.2rem}
 .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.8rem 1.3rem;border-radius:var(--radius-md);font-weight:600;font-size:.97rem;text-decoration:none;border:1px solid transparent;cursor:pointer;transition:transform var(--dur-hover) var(--ease),background var(--dur-hover) var(--ease),border-color var(--dur-hover) var(--ease),box-shadow var(--dur-hover) var(--ease)}
 .btn-primary{background:var(--accent);color:var(--on-accent);box-shadow:var(--shadow-card)}
 .btn-primary:hover{background:var(--accent-hover);color:var(--on-accent);transform:translateY(-1px);box-shadow:var(--shadow-raised)}
-.btn-ghost{background:${ld("hsl(0 0% 100% / .6)", "hsl(0 0% 100% / .04)")};color:var(--fg);border-color:var(--border-strong)}
+.btn-ghost{background:${ld('hsl(0 0% 100% / .6)', 'hsl(0 0% 100% / .04)')};color:var(--fg);border-color:var(--border-strong)}
 .btn-ghost:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-quiet)}
 .btn:focus-visible,a:focus-visible,.app-card:focus-visible,.linkrow:focus-visible{outline:2px solid var(--ring);outline-offset:3px}
 .btn[data-status=coming-soon]{opacity:.6;pointer-events:none;color:var(--fg-muted);background:var(--bg-elev);border-color:var(--border)}
@@ -326,7 +335,7 @@ a.linkrow:hover{border-color:var(--accent)}
   border:1px solid var(--border);border-radius:var(--radius-lg);padding:clamp(1.2rem,3vw,2.2rem);box-shadow:var(--shadow-card)}
 .arch svg{width:100%;max-width:46rem;height:auto;color:var(--fg-subtle);margin-inline:auto;display:block}
 .arch figcaption{color:var(--fg-muted);max-width:62ch;font-size:.97rem;margin:0;line-height:1.55}
-.terminal{background:${ld(n["900"]!, n["950"]!)};border:1px solid var(--border-strong);border-radius:var(--radius);max-width:54rem;overflow:hidden;box-shadow:var(--shadow-raised)}
+.terminal{background:${ld(n['900']!, n['950']!)};border:1px solid var(--border-strong);border-radius:var(--radius);max-width:54rem;overflow:hidden;box-shadow:var(--shadow-raised)}
 .terminal .bar{display:flex;align-items:center;gap:.4rem;padding:.65rem .95rem;border-bottom:1px solid hsl(0 0% 100% / .08);background:hsl(0 0% 100% / .03)}
 .terminal .bar .dot{width:.7rem;height:.7rem;border-radius:999px;background:hsl(0 0% 100% / .22)}
 .terminal .bar .dot:nth-child(1){background:var(--overlay-hue)}

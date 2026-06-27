@@ -7,9 +7,9 @@
 // scripts/build.sh, which resolves --content-dir (workspace mirror or fixture)
 // and the --docs-url/--demo-url/--releases-url/--lang/--dir flags.
 
-import { mkdirSync, writeFileSync, readFileSync, existsSync } from "node:fs";
-import { join } from "node:path";
-import { renderPage, type SiteContent, type LinkTargets, type RenderOptions } from "./render.ts";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { type LinkTargets, type RenderOptions, renderPage, type SiteContent } from './render.ts';
 
 interface BuildArgs {
   contentDir: string;
@@ -19,32 +19,32 @@ interface BuildArgs {
   demoLive: boolean;
   releasesUrl: string;
   lang: string;
-  dir: "ltr" | "rtl";
+  dir: 'ltr' | 'rtl';
 }
 
 export function loadContent(contentDir: string): SiteContent {
-  const file = join(contentDir, "site.json");
+  const file = join(contentDir, 'site.json');
   if (!existsSync(file)) {
     throw new Error(`authored copy not found: ${file} (expected site.json in the content dir)`);
   }
-  const raw = JSON.parse(readFileSync(file, "utf8")) as SiteContent;
+  const raw = JSON.parse(readFileSync(file, 'utf8')) as SiteContent;
   // Validate EVERY field render.ts dereferences so a malformed site.json fails
   // fast here with a clear message, instead of crashing or emitting `undefined`
   // at render time. Single SiteContent schema, no parallel/back-compat path.
   const missing: string[] = [];
-  const str = (v: unknown): v is string => typeof v === "string" && v.length > 0;
+  const str = (v: unknown): v is string => typeof v === 'string' && v.length > 0;
 
   // Top-level scalar copy.
-  if (!str(raw.siteName)) missing.push("siteName");
-  if (!str(raw.tagline)) missing.push("tagline"); // <title>/meta
-  if (!str(raw.headline)) missing.push("headline");
-  if (!str(raw.subhead)) missing.push("subhead");
-  if (!str(raw.positioning)) missing.push("positioning");
-  if (!str(raw.description)) missing.push("description"); // <meta description>
+  if (!str(raw.siteName)) missing.push('siteName');
+  if (!str(raw.tagline)) missing.push('tagline'); // <title>/meta
+  if (!str(raw.headline)) missing.push('headline');
+  if (!str(raw.subhead)) missing.push('subhead');
+  if (!str(raw.positioning)) missing.push('positioning');
+  if (!str(raw.description)) missing.push('description'); // <meta description>
 
   // pillars[] (the principles grid): each card derefs icon/title/blurb.
   if (!Array.isArray(raw.pillars) || raw.pillars.length === 0) {
-    missing.push("pillars");
+    missing.push('pillars');
   } else {
     raw.pillars.forEach((p, i) => {
       if (!str(p?.title)) missing.push(`pillars[${i}].title`);
@@ -54,13 +54,13 @@ export function loadContent(contentDir: string): SiteContent {
   }
 
   // architecture: coreLabel + overlays[] + caption are all rendered.
-  if (!raw.architecture || typeof raw.architecture !== "object") {
-    missing.push("architecture");
+  if (!raw.architecture || typeof raw.architecture !== 'object') {
+    missing.push('architecture');
   } else {
-    if (!str(raw.architecture.coreLabel)) missing.push("architecture.coreLabel");
-    if (!str(raw.architecture.caption)) missing.push("architecture.caption");
+    if (!str(raw.architecture.coreLabel)) missing.push('architecture.coreLabel');
+    if (!str(raw.architecture.caption)) missing.push('architecture.caption');
     if (!Array.isArray(raw.architecture.overlays) || raw.architecture.overlays.length === 0) {
-      missing.push("architecture.overlays");
+      missing.push('architecture.overlays');
     } else {
       raw.architecture.overlays.forEach((o, i) => {
         if (!str(o)) missing.push(`architecture.overlays[${i}]`);
@@ -70,7 +70,7 @@ export function loadContent(contentDir: string): SiteContent {
 
   // deployProfiles[]: each card + badge derefs name/blurb (icon is optional).
   if (!Array.isArray(raw.deployProfiles) || raw.deployProfiles.length === 0) {
-    missing.push("deployProfiles");
+    missing.push('deployProfiles');
   } else {
     raw.deployProfiles.forEach((p, i) => {
       if (!str(p?.name)) missing.push(`deployProfiles[${i}].name`);
@@ -79,26 +79,26 @@ export function loadContent(contentDir: string): SiteContent {
   }
 
   // quickstart: caption (heading) + lines[] (terminal body).
-  if (!raw.quickstart || typeof raw.quickstart !== "object") {
-    missing.push("quickstart");
+  if (!raw.quickstart || typeof raw.quickstart !== 'object') {
+    missing.push('quickstart');
   } else {
-    if (!str(raw.quickstart.caption)) missing.push("quickstart.caption");
+    if (!str(raw.quickstart.caption)) missing.push('quickstart.caption');
     if (!Array.isArray(raw.quickstart.lines) || raw.quickstart.lines.length === 0) {
-      missing.push("quickstart.lines");
+      missing.push('quickstart.lines');
     } else {
       raw.quickstart.lines.forEach((l, i) => {
-        if (typeof l !== "string") missing.push(`quickstart.lines[${i}]`);
+        if (typeof l !== 'string') missing.push(`quickstart.lines[${i}]`);
       });
     }
   }
 
   // footer: columns[] (heading + links[].{label,href}) + note.
-  if (!raw.footer || typeof raw.footer !== "object") {
-    missing.push("footer");
+  if (!raw.footer || typeof raw.footer !== 'object') {
+    missing.push('footer');
   } else {
-    if (!str(raw.footer.note)) missing.push("footer.note");
+    if (!str(raw.footer.note)) missing.push('footer.note');
     if (!Array.isArray(raw.footer.columns) || raw.footer.columns.length === 0) {
-      missing.push("footer.columns");
+      missing.push('footer.columns');
     } else {
       raw.footer.columns.forEach((col, ci) => {
         if (!str(col?.heading)) missing.push(`footer.columns[${ci}].heading`);
@@ -119,12 +119,12 @@ export function loadContent(contentDir: string): SiteContent {
   // omits them. So we validate them ONLY when authored (back-compat with the
   // fixture + tests), but when authored every dereferenced field must be valid.
   if (raw.apps !== undefined) {
-    if (typeof raw.apps !== "object" || raw.apps === null) {
-      missing.push("apps");
+    if (typeof raw.apps !== 'object' || raw.apps === null) {
+      missing.push('apps');
     } else {
-      if (!str(raw.apps.caption)) missing.push("apps.caption");
+      if (!str(raw.apps.caption)) missing.push('apps.caption');
       if (!Array.isArray(raw.apps.groups) || raw.apps.groups.length === 0) {
-        missing.push("apps.groups");
+        missing.push('apps.groups');
       } else {
         raw.apps.groups.forEach((g, gi) => {
           if (!str(g?.heading)) missing.push(`apps.groups[${gi}].heading`);
@@ -142,12 +142,12 @@ export function loadContent(contentDir: string): SiteContent {
   }
 
   if (raw.capabilities !== undefined) {
-    if (typeof raw.capabilities !== "object" || raw.capabilities === null) {
-      missing.push("capabilities");
+    if (typeof raw.capabilities !== 'object' || raw.capabilities === null) {
+      missing.push('capabilities');
     } else {
-      if (!str(raw.capabilities.caption)) missing.push("capabilities.caption");
+      if (!str(raw.capabilities.caption)) missing.push('capabilities.caption');
       if (!Array.isArray(raw.capabilities.items) || raw.capabilities.items.length === 0) {
-        missing.push("capabilities.items");
+        missing.push('capabilities.items');
       } else {
         raw.capabilities.items.forEach((c, ci) => {
           if (!str(c?.icon)) missing.push(`capabilities.items[${ci}].icon`);
@@ -159,12 +159,12 @@ export function loadContent(contentDir: string): SiteContent {
   }
 
   if (raw.demoLinks !== undefined) {
-    if (typeof raw.demoLinks !== "object" || raw.demoLinks === null) {
-      missing.push("demoLinks");
+    if (typeof raw.demoLinks !== 'object' || raw.demoLinks === null) {
+      missing.push('demoLinks');
     } else {
-      if (!str(raw.demoLinks.caption)) missing.push("demoLinks.caption");
+      if (!str(raw.demoLinks.caption)) missing.push('demoLinks.caption');
       if (!Array.isArray(raw.demoLinks.links) || raw.demoLinks.links.length === 0) {
-        missing.push("demoLinks.links");
+        missing.push('demoLinks.links');
       } else {
         raw.demoLinks.links.forEach((l, li) => {
           if (!str(l?.label)) missing.push(`demoLinks.links[${li}].label`);
@@ -175,16 +175,16 @@ export function loadContent(contentDir: string): SiteContent {
   }
 
   if (raw.getStarted !== undefined) {
-    if (typeof raw.getStarted !== "object" || raw.getStarted === null) {
-      missing.push("getStarted");
+    if (typeof raw.getStarted !== 'object' || raw.getStarted === null) {
+      missing.push('getStarted');
     } else {
-      if (!str(raw.getStarted.caption)) missing.push("getStarted.caption");
-      if (!str(raw.getStarted.body)) missing.push("getStarted.body");
+      if (!str(raw.getStarted.caption)) missing.push('getStarted.caption');
+      if (!str(raw.getStarted.body)) missing.push('getStarted.body');
       if (!Array.isArray(raw.getStarted.lines) || raw.getStarted.lines.length === 0) {
-        missing.push("getStarted.lines");
+        missing.push('getStarted.lines');
       } else {
         raw.getStarted.lines.forEach((l, i) => {
-          if (typeof l !== "string") missing.push(`getStarted.lines[${i}]`);
+          if (typeof l !== 'string') missing.push(`getStarted.lines[${i}]`);
         });
       }
     }
@@ -195,7 +195,7 @@ export function loadContent(contentDir: string): SiteContent {
   // when authored.
   if (raw.stats !== undefined) {
     if (!Array.isArray(raw.stats) || raw.stats.length === 0) {
-      missing.push("stats");
+      missing.push('stats');
     } else {
       raw.stats.forEach((s, i) => {
         if (!str(s?.value)) missing.push(`stats[${i}].value`);
@@ -205,12 +205,12 @@ export function loadContent(contentDir: string): SiteContent {
   }
 
   if (raw.status !== undefined) {
-    if (typeof raw.status !== "object" || raw.status === null) {
-      missing.push("status");
+    if (typeof raw.status !== 'object' || raw.status === null) {
+      missing.push('status');
     } else {
-      if (!str(raw.status.caption)) missing.push("status.caption");
+      if (!str(raw.status.caption)) missing.push('status.caption');
       if (!Array.isArray(raw.status.columns) || raw.status.columns.length === 0) {
-        missing.push("status.columns");
+        missing.push('status.columns');
       } else {
         raw.status.columns.forEach((c, ci) => {
           if (!str(c?.heading)) missing.push(`status.columns[${ci}].heading`);
@@ -227,7 +227,9 @@ export function loadContent(contentDir: string): SiteContent {
   }
 
   if (missing.length > 0) {
-    throw new Error(`malformed site.json in ${contentDir}: missing or invalid ${missing.join(", ")}`);
+    throw new Error(
+      `malformed site.json in ${contentDir}: missing or invalid ${missing.join(', ')}`,
+    );
   }
   return raw;
 }
@@ -243,7 +245,7 @@ export function build(args: BuildArgs): string {
   const opts: RenderOptions = { lang: args.lang, dir: args.dir };
   const html = renderPage(content, links, opts);
   mkdirSync(args.outDir, { recursive: true });
-  writeFileSync(join(args.outDir, "index.html"), html);
+  writeFileSync(join(args.outDir, 'index.html'), html);
   return html;
 }
 
@@ -256,17 +258,20 @@ function flag(name: string, fallback: string): string {
 }
 
 if (import.meta.main) {
-  const dirFlag = flag("dir", "ltr");
+  const dirFlag = flag('dir', 'ltr');
   const out = build({
-    contentDir: flag("content-dir", join(import.meta.dir, "..", "examples", "site-content")),
-    outDir: flag("out", join(import.meta.dir, "..", "site")),
+    contentDir: flag('content-dir', join(import.meta.dir, '..', 'examples', 'site-content')),
+    outDir: flag('out', join(import.meta.dir, '..', 'site')),
     // Documented placeholders; the operator rewrites these at deploy time.
-    docsUrl: flag("docs-url", "https://docs.curaos.example"),
-    demoUrl: flag("demo-url", "https://demo.curaos.example"),
-    demoLive: flag("demo-live", "false") === "true",
-    releasesUrl: flag("releases-url", "https://github.com/Cura-Care-Oriented-Stack/curaos/releases"),
-    lang: flag("lang", "en"),
-    dir: dirFlag === "rtl" ? "rtl" : "ltr",
+    docsUrl: flag('docs-url', 'https://curaos-docs.abualruz.com'),
+    demoUrl: flag('demo-url', 'https://curaos-demo.abualruz.com'),
+    demoLive: flag('demo-live', 'false') === 'true',
+    releasesUrl: flag(
+      'releases-url',
+      'https://github.com/Cura-Care-Oriented-Stack/curaos/releases',
+    ),
+    lang: flag('lang', 'en'),
+    dir: dirFlag === 'rtl' ? 'rtl' : 'ltr',
   });
   // Stdout is the build evidence; the smoke + tests assert the structure.
   process.stdout.write(`build: wrote site/index.html (${out.length} bytes)\n`);

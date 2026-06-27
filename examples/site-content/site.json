@@ -8,8 +8,16 @@
   "positioning": "Self-hosted first. Event-led. Multi-tenant.",
   "description": "Self-hosted-first composable care platform fixture.",
   "pillars": [
-    { "icon": "shield", "title": "Self-hosted first", "blurb": "Run it on your own infrastructure." },
-    { "icon": "layers", "title": "Generic before vertical", "blurb": "Verticals extend the core, never fork it." }
+    {
+      "icon": "shield",
+      "title": "Self-hosted first",
+      "blurb": "Run it on your own infrastructure."
+    },
+    {
+      "icon": "layers",
+      "title": "Generic before vertical",
+      "blurb": "Verticals extend the core, never fork it."
+    }
   ],
   "architecture": {
     "coreLabel": "Neutral core",
@@ -24,16 +32,11 @@
   ],
   "quickstart": {
     "caption": "Compose a tenant from the core plus overlays.",
-    "lines": [
-      "$ curaos init acme --profile on-prem",
-      "ok: acme up, zero external calls"
-    ]
+    "lines": ["$ curaos init acme --profile on-prem", "ok: acme up, zero external calls"]
   },
   "footer": {
     "columns": [
-      { "heading": "Product", "links": [
-        { "label": "Documentation", "href": "{docsUrl}" }
-      ]}
+      { "heading": "Product", "links": [{ "label": "Documentation", "href": "{docsUrl}" }] }
     ],
     "note": "CuraOS is a self-hosted-first, composable care platform."
   }
