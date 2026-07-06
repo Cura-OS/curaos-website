@@ -67,22 +67,24 @@ const hsl = (h: number, s: number, l: number): string => `hsl(${h} ${s}% ${l}%)`
  * entries below differing in hue family, neutral tint, mesh, and motion).
  */
 export const THEME_VARIANTS: Readonly<Record<string, ThemeVariant>> = {
-  // Default marketing identity: indigo/violet primary + copper secondary, warm
-  // graphite neutrals. Engineered, owned, distinctly NOT healthcare teal.
+  // Default marketing identity: navy + gold primary (approved CuraOS brand
+  // palette from the logo family). Engineered, owned, distinctly NOT healthcare
+  // teal, NOT the old indigo+copper. Navy (#1e3a8a, hue 239) + gold (#eab308,
+  // hue 43) over warm graphite neutrals tinted toward the gold hue family.
   atlas: {
     key: "atlas",
-    label: "Atlas (indigo + copper)",
+    label: "Atlas (navy + gold)",
     primary: {
-      light: { tint: hsl(256, 92, 97), base: hsl(256, 78, 56), deep: hsl(258, 74, 44) },
-      dark: { tint: hsl(256, 46, 16), base: hsl(255, 92, 76), deep: hsl(252, 96, 84) },
+      light: { tint: hsl(239, 92, 97), base: hsl(239, 78, 34), deep: hsl(239, 74, 24) },
+      dark: { tint: hsl(239, 46, 16), base: hsl(239, 92, 66), deep: hsl(239, 96, 78) },
     },
     secondary: {
-      light: { tint: hsl(26, 92, 95), base: hsl(22, 82, 48), deep: hsl(18, 80, 40) },
-      dark: { tint: hsl(24, 46, 16), base: hsl(28, 92, 64), deep: hsl(32, 96, 72) },
+      light: { tint: hsl(43, 92, 95), base: hsl(43, 82, 48), deep: hsl(43, 80, 40) },
+      dark: { tint: hsl(43, 46, 16), base: hsl(43, 92, 60), deep: hsl(43, 96, 72) },
     },
-    neutralHue: 264,
+    neutralHue: 239,
     neutralSat: 12,
-    meshHues: [256, 22, 286],
+    meshHues: [239, 43, 210],
     motion: 1,
   },
   // Alternate persona: near-monochrome warm ink with a single electric-lime
