@@ -1,12 +1,12 @@
 # curaos-website _(@curaos/curaos-website)_
 
-[![License: Proprietary](https://img.shields.io/badge/license-Proprietary-red)](./LICENSE)
-[![Exposure: Closed](https://img.shields.io/badge/exposure-Closed-red)](#license)
-[![Module: Repo](https://img.shields.io/badge/module-Repo-informational)](#background)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)](./LICENSE)
+[![Exposure: Open](https://img.shields.io/badge/exposure-Open-brightgreen)](#license)
+[![Module: Website](https://img.shields.io/badge/module-Website-informational)](#background)
 
-CuraOS public website: offline/air-gap-renderable static brochure site (Bun-native build, zero external egress)
+CuraOS public website and brand surface
 
-Part of the CuraOS (Care Oriented Stack) platform. CuraOS public website: offline/air-gap-renderable static brochure site (Bun-native build, zero external egress) Domain: neutral.
+Part of the CuraOS (Care Oriented Stack) platform. CuraOS public website and brand surface Domain: neutral.
 
 ## Table of Contents
 
@@ -21,7 +21,7 @@ Part of the CuraOS (Care Oriented Stack) platform. CuraOS public website: offlin
 
 ## Background
 
-CuraOS public website: offline/air-gap-renderable static brochure site (Bun-native build, zero external egress). This module is part of the CuraOS neutral domain, plain layer.
+CuraOS public website and brand surface. This module is part of the CuraOS neutral domain, plain layer.
 
 <!-- curaos:keep -->
 <!-- Add module-specific background, architecture notes, and design decisions here.
@@ -45,7 +45,7 @@ See [docs.curaos.abualruz.com](https://docs.curaos.abualruz.com) (interim).
 
 ## API
 
-See generated API docs or the CuraOS docs site when published.
+See [API reference](./src/index.ts) or generated TypeDoc.
 
 <!-- curaos:keep -->
 <!-- Add API examples, request/response samples, and event payloads here.
@@ -68,4 +68,4 @@ By contributing, you agree that your contributions will be licensed under the sa
 
 ## License
 
-LicenseRef-CuraOS-Proprietary - CuraOS (Care Oriented Stack). See [LICENSE](./LICENSE) for details.
+Apache-2.0 - CuraOS (Care Oriented Stack). See [LICENSE](./LICENSE) for details.
