@@ -1,7 +1,7 @@
 {
   "name": "curaos-website",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "description": "CuraOS public website: offline/air-gap-renderable static brochure site (Bun-native build, zero external egress)",
   "type": "module",
   "engines": {
@@ -21,5 +21,5 @@
     "@types/bun": "1.1.14",
     "typescript": "5.7.2"
   },
-  "license": "LicenseRef-CuraOS-Proprietary"
+  "license": "Apache-2.0"
 }
