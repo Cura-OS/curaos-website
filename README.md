@@ -23,8 +23,6 @@ Part of the CuraOS (Care Oriented Stack) platform. CuraOS public website and bra
 The website gives evaluators, contributors, and customers a clear public entry point without exposing private product source or internal generators.
 
 <!-- curaos:keep -->
-<!-- Add runnable repo-specific setup, local URLs, required env vars, and smoke checks here.
-     This section survives re-emit. -->
 <!-- /curaos:keep -->
 
 ---
@@ -38,8 +36,6 @@ bun run dev
 ```
 
 <!-- curaos:keep -->
-<!-- Add architecture notes, events, APIs, data ownership, and dependency diagrams here.
-     This section survives re-emit. -->
 <!-- /curaos:keep -->
 
 ---
@@ -50,7 +46,8 @@ bun run dev
 - Public adoption funnel linking docs, examples, and trust material
 - Safe public surface separated from internal product source
 
-
+<!-- curaos:keep -->
+<!-- /curaos:keep -->
 
 ---
 
@@ -68,7 +65,8 @@ bun run dev
 - Links outward to docs.curaos.abualruz.com for deeper documentation
 - Carries public-open license and community health files
 
-
+<!-- curaos:keep -->
+<!-- /curaos:keep -->
 
 ---
 
@@ -78,7 +76,8 @@ See [docs.curaos.abualruz.com](https://docs.curaos.abualruz.com) (interim).
 
 See the public documentation at [docs.curaos.abualruz.com](https://docs.curaos.abualruz.com).
 
-
+<!-- curaos:keep -->
+<!-- /curaos:keep -->
 
 ---
 
