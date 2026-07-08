@@ -45,7 +45,7 @@ See [docs.curaos.abualruz.com](https://docs.curaos.abualruz.com) (interim).
 
 ## API
 
-See [API reference](./src/index.ts) or generated TypeDoc.
+See generated API docs or the CuraOS docs site when published.
 
 <!-- curaos:keep -->
 <!-- Add API examples, request/response samples, and event payloads here.
