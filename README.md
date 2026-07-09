@@ -3,9 +3,9 @@
 
 # curaos-website
 
-**The public brand surface for CuraOS, the Care Oriented Stack.**
+**Provide the CuraOS public website: an offline / air-gap-renderable static brochure site (hero + value props + 4-deploy-profile grid + docs/demo/releases links) built with a Bun-native zero-framework renderer. Hostable behind NGINX/K8s, inside a Zarf air-gap bundle, and on GitHub Pages (secondary mirror). The site links the docs site (S4), the demo tenant (S7, coming-soon until #516), and the release-artifacts surface.**
 
-Part of the CuraOS (Care Oriented Stack) platform. CuraOS public website and brand surface. Domain: neutral.
+Part of the CuraOS (Care Oriented Stack) platform. Provide the CuraOS public website: an offline / air-gap-renderable static brochure site (hero + value props + 4-deploy-profile grid + docs/demo/releases links) built with a Bun-native zero-framework renderer. Hostable behind NGINX/K8s, inside a Zarf air-gap bundle, and on GitHub Pages (secondary mirror). The site links the docs site (S4), the demo tenant (S7, coming-soon until #516), and the release-artifacts surface. Domain: neutral.
 
 [![Status](https://img.shields.io/badge/status-public--alpha-informational)](#status)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)](./LICENSE)
@@ -18,9 +18,21 @@ Part of the CuraOS (Care Oriented Stack) platform. CuraOS public website and bra
 
 ---
 
+## At a Glance
+
+| Field | Detail |
+|---|---|
+| Audience | Evaluators, operators, and community adopters. |
+| Homepage | [https://docs.curaos.abualruz.com](https://docs.curaos.abualruz.com) |
+| Exposure | Open |
+| License | Apache-2.0 |
+| Topics | `curaos` `website` `public-open`  |
+
+---
+
 ## Why
 
-The website gives evaluators, contributors, and customers a clear public entry point without exposing private product source or internal generators.
+Provide the CuraOS public website: an offline / air-gap-renderable static brochure site (hero + value props + 4-deploy-profile grid + docs/demo/releases links) built with a Bun-native zero-framework renderer. Hostable behind NGINX/K8s, inside a Zarf air-gap bundle, and on GitHub Pages (secondary mirror). The site links the docs site (S4), the demo tenant (S7, coming-soon until #516), and the release-artifacts surface.
 
 <!-- curaos:keep -->
 <!-- /curaos:keep -->
@@ -42,9 +54,28 @@ bun run dev
 
 ## Capabilities
 
-- Brand positioning for CuraOS and its stack families
-- Public adoption funnel linking docs, examples, and trust material
-- Safe public surface separated from internal product source
+- Website boundary for curaos-website
+- Neutral domain alignment
+- Plain layer ownership
+
+<!-- curaos:keep -->
+<!-- /curaos:keep -->
+
+---
+
+## Surfaces
+
+- Website surface
+- Plain ownership boundary
+
+<!-- curaos:keep -->
+<!-- /curaos:keep -->
+
+---
+
+## Media
+
+- Approved public brand assets only.
 
 <!-- curaos:keep -->
 <!-- /curaos:keep -->
@@ -61,12 +92,10 @@ bun run dev
 | Layer | `plain` |
 | Exposure | Open |
 
-- Static public web surface owned outside the internal product monorepo
-- Links outward to docs.curaos.abualruz.com for deeper documentation
-- Carries public-open license and community health files
+- Source path: `curaos-website`
+- Generated documentation owner: `tools/codegen/src/repo-docs-emit.ts`
 
-<!-- curaos:keep -->
-<!-- /curaos:keep -->
+
 
 ---
 
@@ -76,8 +105,7 @@ See [docs.curaos.abualruz.com](https://docs.curaos.abualruz.com) (interim).
 
 See the public documentation at [docs.curaos.abualruz.com](https://docs.curaos.abualruz.com).
 
-<!-- curaos:keep -->
-<!-- /curaos:keep -->
+
 
 ---
 
@@ -87,13 +115,22 @@ public alpha
 
 - Docs generated from `tools/codegen/src/repo-docs-emit.ts`.
 - Public documentation: [docs.curaos.abualruz.com](https://docs.curaos.abualruz.com).
-- Changelog: [CHANGELOG.md](./CHANGELOG.md) when present.
+- Changelog: [CHANGELOG.md](./CHANGELOG.md).
 
 ---
 
 ## Security
 
 See [SECURITY.md](./SECURITY.md) for vulnerability reporting policy.
+
+Public docs must not expose internal generator, tenant ops, roadmap, pricing, or private deployment details.
+
+Private material stays out of this README:
+
+- Generator templates
+- Internal deployment automation
+- Tenant operations data
+- Roadmap and pricing internals
 
 ---
 
