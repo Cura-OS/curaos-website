@@ -35,9 +35,14 @@ fail=0
 for f in "${FILES[@]}"; do
   # Asset-bearing attributes/constructs that would trigger a remote fetch.
   # We DELIBERATELY do not match <a href> - navigation links are allowed.
+  # <link rel="canonical"> is SEO metadata, not a fetched asset, so a remote
+  # <link> line is only a violation when it is NOT the canonical link (any
+  # other rel - stylesheet/preload/icon/manifest/etc. - still fails).
   remote="$(grep -nEi \
-    '(src|srcset)=["'"'"']?(https?:)?//|<link[^>]+href=["'"'"']?(https?:)?//|@import[[:space:]]+["'"'"']?(https?:)?//|url\((["'"'"']?)(https?:)?//' \
+    '(src|srcset)=["'"'"']?(https?:)?//|@import[[:space:]]+["'"'"']?(https?:)?//|url\((["'"'"']?)(https?:)?//' \
     "$f" || true)"
+  remote_link="$(grep -nEi '<link[^>]+href=["'"'"']?(https?:)?//' "$f" | grep -viE 'rel="?canonical"?' || true)"
+  [[ -z "$remote_link" ]] || remote="${remote}${remote:+$'\n'}${remote_link}"
   if [[ -n "$remote" ]]; then
     err_line="$remote"
     printf 'FAIL: remote CDN asset references in %s:\n%s\n' "$f" "$err_line" >&2

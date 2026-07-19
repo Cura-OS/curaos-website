@@ -182,6 +182,8 @@ export interface LinkTargets {
   readonly demoLive: boolean;
   /** Public release-artifacts landing surface (GitHub Releases). */
   readonly releasesUrl: string;
+  /** Canonical public URL this page is published at (SEO: canonical/OG/JSON-LD/sitemap). */
+  readonly siteUrl: string;
 }
 
 export interface RenderOptions {
@@ -263,6 +265,68 @@ function safeUrl(u: string): string {
     throw new Error(`unsafe or non-navigational URL: ${u}`);
   }
   return esc(trimmed);
+}
+
+/**
+ * The GitHub ORG url, when the authored footer already links to one (reuse of
+ * real authored data for JSON-LD `sameAs`; no separate schema field invented).
+ * Runs the SAME {docsUrl}/{demoUrl}/{releasesUrl} token substitution as the
+ * footer itself so a tokenized href still matches. Prefers the bare org-root
+ * link (`github.com/<org>`) over a deeper path (e.g. a Releases link resolved
+ * through {releasesUrl} to `.../releases`) - sameAs should name the org
+ * profile, not an arbitrary sub-page.
+ */
+function findGithubUrl(
+  content: SiteContent,
+  links: LinkTargets,
+): string | undefined {
+  let firstMatch: string | undefined;
+  for (const col of content.footer.columns) {
+    for (const l of col.links) {
+      const resolved = l.href
+        .replace(/\{docsUrl\}/g, links.docsUrl)
+        .replace(/\{demoUrl\}/g, links.demoUrl)
+        .replace(/\{releasesUrl\}/g, links.releasesUrl);
+      if (!/^https:\/\/github\.com\//i.test(resolved)) continue;
+      if (/^https:\/\/github\.com\/[^/]+\/?$/i.test(resolved)) return resolved;
+      firstMatch ??= resolved;
+    }
+  }
+  return firstMatch;
+}
+
+/**
+ * Organization + SoftwareApplication JSON-LD, built ONLY from fields already
+ * authored in site.json / already-resolved LinkTargets (no fabricated rating,
+ * price, or offer data - CuraOS is pre-1.0 and the site's own honesty policy
+ * is to under-claim, never dress up). `<` escaping (not `esc()`, this is
+ * JSON not HTML attribute text) blocks a `</script>` breakout while staying
+ * valid JSON (any `\uXXXX` escape is legal inside a JSON string).
+ */
+function jsonLd(
+  content: SiteContent,
+  links: LinkTargets,
+  pageTitle: string,
+): string {
+  const org: Record<string, unknown> = {
+    "@type": "Organization",
+    name: content.siteName,
+    url: links.siteUrl,
+  };
+  const githubUrl = findGithubUrl(content, links);
+  if (githubUrl) org.sameAs = [githubUrl];
+
+  const app: Record<string, unknown> = {
+    "@type": "SoftwareApplication",
+    name: pageTitle,
+    description: content.description,
+    url: links.siteUrl,
+    applicationCategory: "BusinessApplication",
+    license: "https://www.apache.org/licenses/LICENSE-2.0",
+  };
+
+  const payload = { "@context": "https://schema.org", "@graph": [org, app] };
+  return `<script type="application/ld+json">${JSON.stringify(payload).replace(/</g, "\\u003c")}</script>`;
 }
 
 export function renderPage(
@@ -574,15 +638,32 @@ ${navItems.map((i) => `        ${i}`).join("\n")}
     esc(content.architecture.caption),
   );
 
+  // SEO metadata: canonical + OpenGraph + Twitter card + JSON-LD, all derived
+  // from the SAME authored fields as <title>/<meta description> (one source of
+  // truth, no separate SEO-only copy to keep in sync).
+  const pageTitle = `${esc(content.siteName)}: ${esc(content.tagline)}`;
+  const canonicalUrl = safeUrl(links.siteUrl);
+  const ldScript = jsonLd(content, links, `${content.siteName}: ${content.tagline}`);
+
   return `<!DOCTYPE html>
 <html lang="${esc(opts.lang)}" dir="${opts.dir}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${esc(content.siteName)}: ${esc(content.tagline)}</title>
+  <title>${pageTitle}</title>
   <meta name="description" content="${esc(content.description)}">
+  <link rel="canonical" href="${canonicalUrl}">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#171520">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="${esc(content.siteName)}">
+  <meta property="og:title" content="${pageTitle}">
+  <meta property="og:description" content="${esc(content.description)}">
+  <meta property="og:url" content="${canonicalUrl}">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="${pageTitle}">
+  <meta name="twitter:description" content="${esc(content.description)}">
+  ${ldScript}
   <style>${STYLE}</style>
 </head>
 <body id="top">

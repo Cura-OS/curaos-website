@@ -18,6 +18,7 @@ interface BuildArgs {
   demoUrl: string;
   demoLive: boolean;
   releasesUrl: string;
+  siteUrl: string;
   lang: string;
   dir: "ltr" | "rtl";
 }
@@ -239,12 +240,37 @@ export function build(args: BuildArgs): string {
     demoUrl: args.demoUrl,
     demoLive: args.demoLive,
     releasesUrl: args.releasesUrl,
+    siteUrl: args.siteUrl,
   };
   const opts: RenderOptions = { lang: args.lang, dir: args.dir };
   const html = renderPage(content, links, opts);
   mkdirSync(args.outDir, { recursive: true });
   writeFileSync(join(args.outDir, "index.html"), html);
+  writeSeoFiles(args.outDir, args.siteUrl);
   return html;
+}
+
+/**
+ * robots.txt + sitemap.xml: this is a single-page brochure, so the sitemap
+ * carries exactly one <url> (the site root). Both reference the same siteUrl
+ * the render step already used for canonical/OG/JSON-LD (one source of truth,
+ * no separate SEO config to drift). lastmod is the real build date, not a
+ * fabricated one.
+ */
+function writeSeoFiles(outDir: string, siteUrl: string): void {
+  const root = siteUrl.replace(/\/+$/, "");
+  writeFileSync(
+    join(outDir, "robots.txt"),
+    `User-agent: *\nAllow: /\n\nSitemap: ${root}/sitemap.xml\n`,
+  );
+  const lastmod = new Date().toISOString().slice(0, 10);
+  writeFileSync(
+    join(outDir, "sitemap.xml"),
+    `<?xml version="1.0" encoding="UTF-8"?>\n` +
+      `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+      `  <url>\n    <loc>${root}/</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>weekly</changefreq>\n  </url>\n` +
+      `</urlset>\n`,
+  );
 }
 
 function flag(name: string, fallback: string): string {
@@ -265,6 +291,7 @@ if (import.meta.main) {
     demoUrl: flag("demo-url", "https://demo.curaos.example"),
     demoLive: flag("demo-live", "false") === "true",
     releasesUrl: flag("releases-url", "https://github.com/Cura-Care-Oriented-Stack/curaos/releases"),
+    siteUrl: flag("site-url", "https://curaos.example"),
     lang: flag("lang", "en"),
     dir: dirFlag === "rtl" ? "rtl" : "ltr",
   });

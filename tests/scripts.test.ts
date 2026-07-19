@@ -79,6 +79,8 @@ describe("scripts/build.sh - end-to-end render with flag injection", () => {
         "https://demo.example.test",
         "--releases-url",
         "https://rel.example.test",
+        "--site-url",
+        "https://www.example.test",
         "--lang",
         "ar",
         "--dir",
@@ -90,10 +92,29 @@ describe("scripts/build.sh - end-to-end render with flag injection", () => {
       expect(html).toContain(`href="https://docs.example.test"`);
       expect(html).toContain(`href="https://rel.example.test"`);
       expect(html).toContain(`dir="rtl"`);
+      expect(html).toContain(`<link rel="canonical" href="https://www.example.test">`);
       // Demo is not live by default: the CTA is a non-navigational coming-soon
       // placeholder with NO href to the demo URL (finding 5).
       expect(html).toContain(`data-status="coming-soon"`);
       expect(html).not.toContain(`href="https://demo.example.test"`);
+    } finally {
+      rmSync(out, { recursive: true, force: true });
+    }
+  });
+
+  test("emits robots.txt + a single-URL sitemap.xml pointed at siteUrl (default when --site-url omitted)", () => {
+    const out = mkdtempSync(join(tmpdir(), "site-build-seo-"));
+    try {
+      const r = sh("scripts/build.sh", ["--out", out]);
+      expect(r.stdout + r.stderr).toContain("build: PASS");
+      const robots = readFileSync(join(out, "robots.txt"), "utf8");
+      expect(robots).toContain("User-agent: *");
+      expect(robots).toContain("Allow: /");
+      expect(robots).toContain("Sitemap: https://curaos.example/sitemap.xml");
+      const sitemap = readFileSync(join(out, "sitemap.xml"), "utf8");
+      expect(sitemap).toContain("<urlset");
+      expect(sitemap).toContain("<loc>https://curaos.example/</loc>");
+      expect(sitemap).toContain("<lastmod>");
     } finally {
       rmSync(out, { recursive: true, force: true });
     }
@@ -226,6 +247,36 @@ describe("scripts/offline-smoke.sh - air-gap egress guard", () => {
       const r = sh("scripts/offline-smoke.sh", ["--site", site]);
       expect(r.stdout + r.stderr).toContain("offline-smoke: PASS");
       expect(r.status).toBe(0);
+    } finally {
+      rmSync(site, { recursive: true, force: true });
+    }
+  });
+
+  test("PASSES with a remote <link rel=canonical> (SEO metadata, not a fetched asset)", () => {
+    const site = mkdtempSync(join(tmpdir(), "site-canonical-"));
+    try {
+      writeFileSync(
+        join(site, "index.html"),
+        `<head><link rel="canonical" href="https://curaos.example"><style>x</style></head><body>ok</body>`,
+      );
+      const r = sh("scripts/offline-smoke.sh", ["--site", site]);
+      expect(r.stdout + r.stderr).toContain("offline-smoke: PASS");
+      expect(r.status).toBe(0);
+    } finally {
+      rmSync(site, { recursive: true, force: true });
+    }
+  });
+
+  test("still FAILS on a remote <link rel=stylesheet> (a real fetched asset)", () => {
+    const site = mkdtempSync(join(tmpdir(), "site-remote-stylesheet-"));
+    try {
+      writeFileSync(
+        join(site, "index.html"),
+        `<head><link rel="stylesheet" href="https://cdn.example.com/x.css"></head><body>ok</body>`,
+      );
+      const r = sh("scripts/offline-smoke.sh", ["--site", site]);
+      expect(r.status).not.toBe(0);
+      expect(r.stdout + r.stderr).toMatch(/remote CDN asset references/);
     } finally {
       rmSync(site, { recursive: true, force: true });
     }

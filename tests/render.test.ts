@@ -97,6 +97,7 @@ const LINKS: LinkTargets = {
   demoUrl: "https://demo.curaos.example",
   demoLive: false,
   releasesUrl: "https://github.com/Cura-Care-Oriented-Stack/curaos/releases",
+  siteUrl: "https://curaos.example",
 };
 
 const LTR: RenderOptions = { lang: "en", dir: "ltr" };
@@ -344,6 +345,88 @@ describe("renderPage: product overview, capabilities, live surfaces", () => {
   });
 });
 
+describe("renderPage: SEO metadata (canonical + OpenGraph + Twitter + JSON-LD)", () => {
+  test("emits a canonical link to the resolved siteUrl", () => {
+    const html = renderPage(CONTENT, LINKS, LTR);
+    expect(html).toContain(`<link rel="canonical" href="https://curaos.example">`);
+  });
+
+  test("emits OpenGraph + Twitter card tags from the same authored copy as <title>/<meta description>", () => {
+    const html = renderPage(CONTENT, LINKS, LTR);
+    expect(html).toContain(`<meta property="og:type" content="website">`);
+    expect(html).toContain(`<meta property="og:site_name" content="CuraOS">`);
+    expect(html).toContain(`<meta property="og:title" content="CuraOS: Composable care platform">`);
+    expect(html).toContain(`<meta property="og:description" content="Self-hosted-first composable platform.">`);
+    expect(html).toContain(`<meta property="og:url" content="https://curaos.example">`);
+    expect(html).toContain(`<meta name="twitter:card" content="summary">`);
+    expect(html).toContain(`<meta name="twitter:title" content="CuraOS: Composable care platform">`);
+  });
+
+  test("emits Organization + SoftwareApplication JSON-LD with the real GitHub org (no fabricated rating/offer/price)", () => {
+    const html = renderPage(CONTENT, LINKS, LTR);
+    const match = html.match(
+      /<script type="application\/ld\+json">([\s\S]*?)<\/script>/,
+    );
+    expect(match).not.toBeNull();
+    // < is a legal JSON string escape; JSON.parse decodes it natively.
+    const parsed = JSON.parse(match![1]!);
+    expect(parsed["@context"]).toBe("https://schema.org");
+    const types = parsed["@graph"].map((n: { "@type": string }) => n["@type"]);
+    expect(types).toContain("Organization");
+    expect(types).toContain("SoftwareApplication");
+    const org = parsed["@graph"].find(
+      (n: { "@type": string }) => n["@type"] === "Organization",
+    );
+    expect(org.sameAs).toContain("https://github.com/Cura-Care-Oriented-Stack");
+  });
+
+  test("prefers the bare GitHub org-root link over a deeper Releases sub-path", () => {
+    // Regression: a footer column earlier in the array carrying a {releasesUrl}
+    // token (which resolves to a github.com/.../releases URL) must NOT win over
+    // a later column's plain org-root link.
+    const withReleasesFirst: SiteContent = {
+      ...CONTENT,
+      footer: {
+        ...CONTENT.footer,
+        columns: [
+          { heading: "Product", links: [{ label: "Releases", href: "{releasesUrl}" }] },
+          {
+            heading: "Project",
+            links: [{ label: "GitHub", href: "https://github.com/Cura-Care-Oriented-Stack" }],
+          },
+        ],
+      },
+    };
+    const html = renderPage(withReleasesFirst, LINKS, LTR);
+    const match = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+    const parsed = JSON.parse(match![1]!);
+    const org = parsed["@graph"].find((n: { "@type": string }) => n["@type"] === "Organization");
+    expect(org.sameAs).toEqual(["https://github.com/Cura-Care-Oriented-Stack"]);
+    const app = parsed["@graph"].find(
+      (n: { "@type": string }) => n["@type"] === "SoftwareApplication",
+    );
+    expect(app.offers).toBeUndefined();
+    expect(app.aggregateRating).toBeUndefined();
+    expect(app.license).toBe("https://www.apache.org/licenses/LICENSE-2.0");
+  });
+
+  test("escapes a </script> breakout attempt inside JSON-LD authored text", () => {
+    const evil: SiteContent = {
+      ...CONTENT,
+      description: "Safe text </script><script>alert(1)</script>",
+    };
+    const html = renderPage(evil, LINKS, LTR);
+    expect(html).not.toContain("</script><script>alert(1)</script>");
+    expect(html).toContain("\\u003c/script>");
+  });
+
+  test("rejects a non-http(s) scheme for siteUrl", () => {
+    expect(() =>
+      renderPage(CONTENT, { ...LINKS, siteUrl: "javascript:alert(1)" }, LTR),
+    ).toThrow(/unsafe or non-navigational/);
+  });
+});
+
 describe("renderPage: em-dash purge (curaos-no-em-dash-rule)", () => {
   test("emits NO em-dash (U+2014) or en-dash (U+2013) anywhere in the output", () => {
     const html = renderPage(CONTENT, LINKS, LTR);
@@ -359,9 +442,14 @@ describe("renderPage: em-dash purge (curaos-no-em-dash-rule)", () => {
 });
 
 describe("renderPage: content + air-gap safety", () => {
-  test("emits NO remote asset references (no remote script/link/font)", () => {
+  test("emits NO remote asset references (no remote stylesheet/font/script link)", () => {
     const html = renderPage(CONTENT, LINKS, LTR);
-    expect(html).not.toMatch(/<link[^>]+href=["']?https?:\/\//i);
+    // <link rel="canonical"> is metadata, not a fetched asset (SEO), so it is
+    // the one <link href="https://..."> allowed; any OTHER remote <link> (a
+    // stylesheet, preload, icon, etc.) would break air-gap rendering.
+    const remoteLinks = html.match(/<link[^>]+href=["']?https?:\/\/[^>]*>/gi) ?? [];
+    for (const l of remoteLinks) expect(l).toMatch(/rel="canonical"/);
+    expect(html).toContain(`<link rel="canonical" href="https://curaos.example">`);
     expect(html).not.toMatch(/<script[^>]+src=["']?https?:\/\//i);
     expect(html).toContain("<style>");
     // Navigation anchors to docs/demo/releases ARE allowed (not assets).
