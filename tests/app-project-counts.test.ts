@@ -1,52 +1,81 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const ROOT = join(import.meta.dir, "..");
-const CANONICAL_APP_PROJECT_COUNT = 24;
-const SITE_JSON = join(ROOT, "content/site.json");
+const LOCAL_SITE_JSON = join(ROOT, "content/site.json");
+const CANONICAL_CONTENT_DIR = process.env.CURAOS_WEBSITE_CONTENT_DIR;
 
-type PublicString = { path: string; value: string };
+type App = { blurb?: string };
+type SiteContent = {
+  _comment: string;
+  subhead: string;
+  description: string;
+  stats: Array<{ value: string; label: string }>;
+  apps: {
+    caption: string;
+    intro: string;
+    groups: Array<{ apps: App[] }>;
+  };
+  status: { columns: Array<{ heading: string; items: string[] }> };
+};
 
-function publicStrings(value: unknown, path = "$", strings: PublicString[] = []) {
-  if (typeof value === "string") {
-    strings.push({ path, value });
-  } else if (Array.isArray(value)) {
-    value.forEach((item, index) => publicStrings(item, `${path}[${index}]`, strings));
-  } else if (value && typeof value === "object") {
-    Object.entries(value).forEach(([key, item]) => publicStrings(item, `${path}.${key}`, strings));
-  }
-  return strings;
+function readSite(path: string): SiteContent {
+  return JSON.parse(readFileSync(path, "utf8"));
 }
 
-function appProjectClaims(site: unknown) {
-  return publicStrings(site).flatMap(({ path, value }) =>
-    [...value.matchAll(/\b(\d+|twenty-four)\s+(?:frontend\s+)?app projects\b/gi)].map((match) => ({
-      path,
-      value: match[1]!.toLowerCase() === "twenty-four" ? 24 : Number(match[1]!),
-      claim: match[0],
-    })),
+function listedAppInventory(site: SiteContent) {
+  const apps = site.apps.groups.flatMap((group) => group.apps);
+  const expo = apps.filter((app) => /Expo mobile/i.test(app.blurb ?? "")).length;
+  return { total: apps.length, expo, web: apps.length - expo };
+}
+
+function expectListedProjectCopy(site: SiteContent) {
+  const { total, web, expo } = listedAppInventory(site);
+  const totalPhrase = `${total} listed frontend app projects`;
+  const breakdown = `${web} listed web apps plus ${expo} Expo mobile apps`;
+  const realToday = site.status.columns.find((column) => column.heading === "Real today");
+
+  expect(site.stats).toContainEqual({
+    value: String(total),
+    label: "listed frontend app projects",
+  });
+  expect(site.subhead).toContain(totalPhrase);
+  expect(site.description).toContain(`public brochure lists ${total} frontend app projects`);
+  expect(site.apps.caption).toContain(`${total} listed app projects`);
+  expect(site.apps.intro).toContain(`public brochure lists ${total} frontend app projects: ${breakdown}`);
+  expect(realToday?.items).toContain(`${totalPhrase} on one design system: ${breakdown}`);
+  expect(site._comment).toContain(
+    `public brochure inventory lists ${total} frontend app projects: ${breakdown}`,
   );
+  expect(JSON.stringify(site)).not.toMatch(/\b(?:24|twenty-four)\s+(?:frontend\s+)?app projects\b/i);
 }
 
-describe("public app-project count copy", () => {
-  test("makes every app-project claim match the canonical count", () => {
-    const site = JSON.parse(readFileSync(SITE_JSON, "utf8"));
-    const claims = appProjectClaims(site);
+function listedProjectCopy(site: SiteContent) {
+  const realToday = site.status.columns.find((column) => column.heading === "Real today");
+  return {
+    comment: site._comment,
+    subhead: site.subhead,
+    description: site.description,
+    stats: site.stats,
+    caption: site.apps.caption,
+    intro: site.apps.intro,
+    realToday: realToday?.items[0],
+  };
+}
 
-    expect(claims).toEqual(expect.arrayContaining([
-      expect.objectContaining({ path: "$._comment", value: CANONICAL_APP_PROJECT_COUNT }),
-      expect.objectContaining({ path: "$.subhead", value: CANONICAL_APP_PROJECT_COUNT }),
-      expect.objectContaining({ path: "$.description", value: CANONICAL_APP_PROJECT_COUNT }),
-      expect.objectContaining({ path: "$.apps.caption", value: CANONICAL_APP_PROJECT_COUNT }),
-      expect.objectContaining({ path: "$.apps.intro", value: CANONICAL_APP_PROJECT_COUNT }),
-      expect.objectContaining({ path: "$.status.columns[0].items[0]", value: CANONICAL_APP_PROJECT_COUNT }),
-    ]));
-    expect(site.stats).toEqual(expect.arrayContaining([
-      { value: String(CANONICAL_APP_PROJECT_COUNT), label: "frontend app projects" },
-    ]));
-    expect(claims.map(({ value }) => value)).toEqual(
-      Array(claims.length).fill(CANONICAL_APP_PROJECT_COUNT),
-    );
+describe("public listed app-project count copy", () => {
+  test("derives local mirror claims from its listed brochure inventory", () => {
+    expectListedProjectCopy(readSite(LOCAL_SITE_JSON));
+  });
+
+  test.skipIf(!CANONICAL_CONTENT_DIR)("keeps the local mirror aligned with mounted canonical content", () => {
+    const canonicalSiteJson = join(CANONICAL_CONTENT_DIR!, "site.json");
+    expect(existsSync(canonicalSiteJson)).toBe(true);
+
+    const local = readSite(LOCAL_SITE_JSON);
+    const canonical = readSite(canonicalSiteJson);
+    expectListedProjectCopy(canonical);
+    expect(listedProjectCopy(local)).toEqual(listedProjectCopy(canonical));
   });
 });

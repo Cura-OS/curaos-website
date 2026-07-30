@@ -1,16 +1,16 @@
 {
-  "_comment": "CANONICAL authored brochure copy for curaos.abualruz.com. PUBLIC product brochure (no PHI, no tenant data). This workspace mirror is the canonical authoring source per the repo-boundary rule; scripts/build.sh on the box resolves --content-dir to the repo copy (curaos/curaos-website/content/site.json), which is kept byte-synced with this file. examples/site-content/site.json is a MINIMAL build/test fixture only. Copy here is the OpenDesign Marketing Redesign (project curaos-marketing) reworded to current live reality and folded into the renderer schema: every renderer-consumed field (siteName, tagline, eyebrow, headline, subhead, positioning, description, pillars[], architecture, deployProfiles[], status, quickstart, footer) is enriched; extra authoring keys (stats, apps, capabilities, demoLinks, getStarted) are retained for the doc graph and future renderer growth even though the current renderer ignores them. Every claim is verified against the CuraOS charter (AGENTS.md) and what is actually live: 24 frontend app projects, 20 web apps in the local render gate, 19 public vanity web hosts, and 72 routed backend services exposing 143 generated gateway domains. Capability claims that are not yet GA are framed as design intent, not shipped. Zero em-dashes or en-dashes (binding rule). App and demo hrefs are literal https URLs (the live hosts); docs/releases/demo use {docsUrl}/{releasesUrl}/{demoUrl} tokens resolved from the same build flags as the hero CTAs.",
+  "_comment": "CANONICAL authored brochure copy for curaos.abualruz.com. PUBLIC product brochure (no PHI, no tenant data). This workspace mirror is the canonical authoring source per the repo-boundary rule; scripts/build.sh on the box resolves --content-dir to the repo copy (curaos/curaos-website/content/site.json), which is kept byte-synced with this file. examples/site-content/site.json is a MINIMAL build/test fixture only. Copy here is the OpenDesign Marketing Redesign (project curaos-marketing) reworded to current live reality and folded into the renderer schema: every renderer-consumed field (siteName, tagline, eyebrow, headline, subhead, positioning, description, pillars[], architecture, deployProfiles[], status, quickstart, footer) is enriched; extra authoring keys (stats, apps, capabilities, demoLinks, getStarted) are retained for the doc graph and future renderer growth even though the current renderer ignores them. The public brochure inventory lists 22 frontend app projects: 20 listed web apps plus 2 Expo mobile apps. The workspace registry separately has more registered frontend apps, so this brochure claim is deliberately qualified to its listed public projects. Twenty web apps are in the local render gate, 19 public vanity web hosts are reachable, and 72 routed backend services expose 143 generated gateway domains. Capability claims that are not yet GA are framed as design intent, not shipped. Zero em-dashes or en-dashes (binding rule). App and demo hrefs are literal https URLs (the live hosts); docs/releases/demo use {docsUrl}/{releasesUrl}/{demoUrl} tokens resolved from the same build flags as the hero CTAs.",
   "siteName": "CuraOS",
   "tagline": "Composable, self-hosted-first care platform",
   "eyebrow": "Care Oriented Stack",
   "headline": "The care platform you actually own",
-  "subhead": "A composable, self-hosted-first stack: a generic neutral core with opt-in overlays for health, education, and ERP. Twenty-four frontend app projects and 72 routed backend services run right now, self-hosted on Kubernetes, composed from one codebase and one shared design system. It deploys to cloud, on-prem, hybrid, or fully air-gapped.",
+  "subhead": "A composable, self-hosted-first stack: a generic neutral core with opt-in overlays for health, education, and ERP. 22 listed frontend app projects and 72 routed backend services run right now, self-hosted on Kubernetes, composed from one codebase and one shared design system. It deploys to cloud, on-prem, hybrid, or fully air-gapped.",
   "positioning": "Self-hosted first. Event-led. Multi-tenant from one codebase. No managed-cloud lock-in.",
-  "description": "CuraOS is a composable, self-hosted-first platform: a generic neutral core with opt-in vertical overlays (Health, Education, ERP). It runs today as 24 frontend app projects on a shared design system and 72 routed backend services on self-hosted Kubernetes, with single sign-on through Pocket-ID, and is designed to deploy across cloud, on-prem, hybrid, and air-gapped targets. CuraOS is in active development (pre-1.0); the deployment profiles and overlay depth harden along the roadmap.",
+  "description": "CuraOS is a composable, self-hosted-first platform: a generic neutral core with opt-in vertical overlays (Health, Education, ERP). Its public brochure lists 22 frontend app projects on a shared design system and 72 routed backend services on self-hosted Kubernetes, with single sign-on through Pocket-ID, and is designed to deploy across cloud, on-prem, hybrid, and air-gapped targets. CuraOS is in active development (pre-1.0); the deployment profiles and overlay depth harden along the roadmap.",
   "stats": [
-    { "value": "24", "label": "frontend app projects" },
+    { "value": "22", "label": "listed frontend app projects" },
     { "value": "72", "label": "routed backend services" },
-    { "value": "62", "label": "shared packages + SDKs" },
+
     { "value": "4", "label": "deployment targets" },
     { "value": "0", "label": "external calls in air-gap" }
   ],
@@ -23,8 +23,8 @@
     { "icon": "puzzle", "title": "Composable", "blurb": "Services, libraries, and clients ship independently and combine per tenant and per market. Opt into the verticals you need; each overlay is additive on a shared foundation, not a separate fork." }
   ],
   "apps": {
-    "caption": "Twenty-four app projects, one design system",
-    "intro": "The suite tracks 24 frontend app projects: 22 web apps plus 2 Expo mobile apps. Nineteen web apps are reachable today on public vanity hosts; Builder Studio is a cluster web app without a public vanity host. Sign-in is OIDC through Pocket-ID, brokered by the identity service into a CuraOS session. Dark mode and right-to-left Arabic are built in and persist across reloads.",
+    "caption": "22 listed app projects, one design system",
+    "intro": "The public brochure lists 22 frontend app projects: 20 listed web apps plus 2 Expo mobile apps. Nineteen web apps are reachable today on public vanity hosts; Builder Studio is a cluster web app without a public vanity host. Sign-in is OIDC through Pocket-ID, brokered by the identity service into a CuraOS session. Dark mode and right-to-left Arabic are built in and persist across reloads.",
     "groups": [
       {
         "icon": "blocks",
@@ -108,7 +108,7 @@
       {
         "heading": "Real today",
         "items": [
-          "24 frontend app projects on one design system: 22 web apps plus 2 Expo mobile apps",
+          "22 listed frontend app projects on one design system: 20 listed web apps plus 2 Expo mobile apps",
           "19 public vanity web hosts and 20 local web apps exercised by the real-data render gate",
           "72 routed backend services exposing 143 generated gateway domains",
           "OIDC sign-in (Authorization Code with PKCE) through Pocket-ID, brokered by the identity service into a CuraOS session",
