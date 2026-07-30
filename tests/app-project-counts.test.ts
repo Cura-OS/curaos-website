@@ -5,6 +5,7 @@ import { join } from "node:path";
 const ROOT = join(import.meta.dir, "..");
 const LOCAL_SITE_JSON = join(ROOT, "content/site.json");
 const CANONICAL_CONTENT_DIR = process.env.CURAOS_WEBSITE_CONTENT_DIR;
+const CANONICAL_LISTED_APP_COUNTS = { total: 22, web: 20, expo: 2 };
 
 type App = { blurb?: string };
 type SiteContent = {
@@ -31,7 +32,10 @@ function listedAppInventory(site: SiteContent) {
 }
 
 function expectListedProjectCopy(site: SiteContent) {
-  const { total, web, expo } = listedAppInventory(site);
+  const inventory = listedAppInventory(site);
+  expect(inventory).toEqual(CANONICAL_LISTED_APP_COUNTS);
+
+  const { total, web, expo } = inventory;
   const totalPhrase = `${total} listed frontend app projects`;
   const breakdown = `${web} listed web apps plus ${expo} Expo mobile apps`;
   const realToday = site.status.columns.find((column) => column.heading === "Real today");
@@ -65,6 +69,13 @@ function listedProjectCopy(site: SiteContent) {
 }
 
 describe("public listed app-project count copy", () => {
+  test("requires mounted canonical content in CI", () => {
+    if (process.env.CI) {
+      expect(CANONICAL_CONTENT_DIR).toBeTruthy();
+      expect(existsSync(join(CANONICAL_CONTENT_DIR!, "site.json"))).toBe(true);
+    }
+  });
+
   test("derives local mirror claims from its listed brochure inventory", () => {
     expectListedProjectCopy(readSite(LOCAL_SITE_JSON));
   });
