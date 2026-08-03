@@ -24,9 +24,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # SHA-pinned: this repo's own `bash ci.sh` gate runs a pin-guard that fails
-      # the build on any action referenced by a floating tag (run 30790962165:
-      # "FAIL: Action not SHA-pinned: actions/checkout@v4"). Same pins the
-      # existing pages.yml and the sibling curaos-deploy ci.yml already use.
+      # the build on any action referenced by a floating tag rather than a commit
+      # SHA (run 30790962165 reported both of this job's actions as not SHA-pinned).
+      # Same pins the existing pages.yml and the sibling curaos-deploy ci.yml use.
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
