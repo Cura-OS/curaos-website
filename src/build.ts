@@ -271,3 +271,4 @@ if (import.meta.main) {
   // Stdout is the build evidence; the smoke + tests assert the structure.
   process.stdout.write(`build: wrote site/index.html (${out.length} bytes)\n`);
 }
+export const gateProbe: number = "not a number";
