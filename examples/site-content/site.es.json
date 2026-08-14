@@ -1,0 +1,40 @@
+{
+  "_comment": "Locale fixture (es). Same schema as site.json; drives the per-locale build loop (buildLocalized) which emits site/es/index.html with lang=es dir=ltr. Canonical translated copy lives downstream in the workspace mirror; this stays a short, structurally valid standalone build/test fixture.",
+  "siteName": "CuraOS",
+  "tagline": "Plataforma de cuidado componible",
+  "eyebrow": "Stack orientado al cuidado",
+  "headline": "La plataforma de cuidado que de verdad posees",
+  "subhead": "Un nucleo neutral generico con capas opcionales.",
+  "positioning": "Autoalojado primero. Guiado por eventos. Multiinquilino.",
+  "description": "Plataforma de cuidado componible, autoalojada primero.",
+  "pillars": [
+    { "icon": "shield", "title": "Autoalojado primero", "blurb": "Ejecutalo en tu propia infraestructura." },
+    { "icon": "layers", "title": "Generico antes que vertical", "blurb": "Los verticales extienden el nucleo, nunca lo bifurcan." }
+  ],
+  "architecture": {
+    "coreLabel": "Nucleo neutral",
+    "overlays": ["HealthStack", "EducationStack", "ERP"],
+    "caption": "Las capas dependen del nucleo neutral, nunca al reves."
+  },
+  "deployProfiles": [
+    { "icon": "cloud", "name": "SaaS en la nube", "blurb": "Por inquilino, gestionado por el proveedor." },
+    { "icon": "server", "name": "En las instalaciones", "blurb": "Un solo inquilino en la infraestructura del cliente." },
+    { "icon": "split", "name": "Hibrido", "blurb": "Plano de control del proveedor, plano de datos del cliente." },
+    { "icon": "lock", "name": "Laboratorio casero / aislado", "blurb": "Totalmente sin conexion, cero llamadas externas." }
+  ],
+  "quickstart": {
+    "caption": "Compon un inquilino con el nucleo mas las capas.",
+    "lines": [
+      "$ curaos init acme --profile on-prem",
+      "ok: acme activo, cero llamadas externas"
+    ]
+  },
+  "footer": {
+    "columns": [
+      { "heading": "Producto", "links": [
+        { "label": "Documentacion", "href": "{docsUrl}" }
+      ]}
+    ],
+    "note": "CuraOS es una plataforma de cuidado componible y autoalojada primero."
+  }
+}
