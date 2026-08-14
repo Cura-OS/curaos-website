@@ -1,0 +1,40 @@
+{
+  "_comment": "Locale fixture (ar). Same schema as site.json; drives the per-locale build loop (buildLocalized) which emits site/ar/index.html with lang=ar dir=rtl (direction derived from the tag). Exercises the RTL seam end to end. Canonical translated copy lives downstream in the workspace mirror.",
+  "siteName": "CuraOS",
+  "tagline": "منصة رعاية قابلة للتركيب",
+  "eyebrow": "حزمة موجهة للرعاية",
+  "headline": "منصة الرعاية التي تملكها فعلا",
+  "subhead": "نواة محايدة عامة مع طبقات اختيارية.",
+  "positioning": "الاستضافة الذاتية اولا. مقودة بالاحداث. متعددة المستاجرين.",
+  "description": "منصة رعاية قابلة للتركيب، الاستضافة الذاتية اولا.",
+  "pillars": [
+    { "icon": "shield", "title": "الاستضافة الذاتية اولا", "blurb": "شغلها على بنيتك التحتية الخاصة." },
+    { "icon": "layers", "title": "العام قبل العمودي", "blurb": "الطبقات توسع النواة ولا تشعبها ابدا." }
+  ],
+  "architecture": {
+    "coreLabel": "نواة محايدة",
+    "overlays": ["HealthStack", "EducationStack", "ERP"],
+    "caption": "الطبقات تعتمد على النواة المحايدة، وليس العكس."
+  },
+  "deployProfiles": [
+    { "icon": "cloud", "name": "سحابة SaaS", "blurb": "لكل مستاجر، يديرها المزود." },
+    { "icon": "server", "name": "في الموقع", "blurb": "مستاجر واحد على بنية العميل التحتية." },
+    { "icon": "split", "name": "هجين", "blurb": "مستوى تحكم المزود، مستوى بيانات العميل." },
+    { "icon": "lock", "name": "مختبر منزلي / معزول", "blurb": "دون اتصال تماما، صفر مكالمات خارجية." }
+  ],
+  "quickstart": {
+    "caption": "ركب مستاجرا من النواة مع الطبقات.",
+    "lines": [
+      "$ curaos init acme --profile on-prem",
+      "ok: acme يعمل، صفر مكالمات خارجية"
+    ]
+  },
+  "footer": {
+    "columns": [
+      { "heading": "المنتج", "links": [
+        { "label": "التوثيق", "href": "{docsUrl}" }
+      ]}
+    ],
+    "note": "CuraOS منصة رعاية قابلة للتركيب، الاستضافة الذاتية اولا."
+  }
+}
