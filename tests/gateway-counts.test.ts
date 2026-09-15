@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const ROOT = join(import.meta.dir, "..");
-const CANONICAL_GATEWAY_COUNTS = { services: 72, domains: 143 } as const;
+const CANONICAL_GATEWAY_COUNTS = { services: 75, domains: 162 } as const;
 const CONTENT_DIR = process.env.CURAOS_WEBSITE_CONTENT_DIR
   ?? process.env.CONTENT_DIR
   ?? join(ROOT, "content");
