@@ -140,7 +140,7 @@
       { "label": "Front office", "href": "https://front-office.abualruz.com", "blurb": "Operations desk" },
       { "label": "API gateway", "href": "https://api.abualruz.com", "blurb": "162 generated domains" },
       { "label": "Documentation", "href": "{docsUrl}", "blurb": "Install, integrate, operate" },
-      { "label": "Source on GitHub", "href": "https://github.com/Cura-Care-Oriented-Stack", "blurb": "Open source org" }
+      { "label": "Source on GitHub", "href": "https://github.com/Cura-OS", "blurb": "Open source org" }
     ]
   },
   "quickstart": {
@@ -166,7 +166,7 @@
     "caption": "Run it on your own infrastructure",
     "body": "CuraOS deploys to Kubernetes with CNPG Postgres, Valkey, and an ingress controller. The full self-host walkthrough, including OIDC setup and the service catalog, lives in the docs. The commands below are illustrative of the target flow.",
     "lines": [
-      "$ git clone https://github.com/Cura-Care-Oriented-Stack/curaos",
+      "$ git clone https://github.com/Cura-OS/curaos",
       "$ helm install curaos ./ops/charts/umbrella   # illustrative",
       "ok: neutral core up; add overlays per tenant"
     ]
@@ -190,7 +190,7 @@
         { "label": "Sign in", "href": "https://login.abualruz.com" }
       ]},
       { "heading": "Project", "links": [
-        { "label": "GitHub", "href": "https://github.com/Cura-Care-Oriented-Stack" },
+        { "label": "GitHub", "href": "https://github.com/Cura-OS" },
         { "label": "Releases", "href": "{releasesUrl}" }
       ]}
     ],
